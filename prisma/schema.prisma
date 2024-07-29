@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Teacher {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  password     String
+  rfid         String
+  phone_number String
+  occupation   OccupationType
+  created_date DateTime       @default(now())
+  updated_date DateTime       @default(now())
+  Student      Student[]
+  Category     Category[]
+  Books        Books[]
+  BorrowBook   BorrowBook[]
+  ReturnBook   ReturnBook[]
+}
+
+model Student {
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  role_number  Int
+  current_year CurrentYearType
+  created_by   Teacher         @relation(fields: [teacherId], references: [id])
+  teacherId    String          @db.ObjectId
+  created_date DateTime        @default(now())
+  updated_date DateTime        @default(now())
+  BorrowBook   BorrowBook[]
+  ReturnBook   ReturnBook[]
+}
+
+model Category {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  category     String
+  created_by   Teacher  @relation(fields: [teacherId], references: [id])
+  created_date DateTime @default(now())
+  updated_date DateTime @default(now())
+  teacherId    String   @db.ObjectId
+}
+
+model Books {
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
+  title            String
+  author           String
+  isbn             String
+  categories       String[]     @db.ObjectId
+  description      String
+  publication_date DateTime
+  amount           Int
+  place            String
+  is_borrowable    Boolean
+  created_by       Teacher      @relation(fields: [teacherId], references: [id])
+  created_date     DateTime     @default(now())
+  updated_date     DateTime     @default(now())
+  teacherId        String       @db.ObjectId
+  BorrowBook       BorrowBook[]
+  ReturnBook       ReturnBook[]
+}
+
+model BorrowBook {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  book_id      Books    @relation(fields: [booksId], references: [id])
+  borrowed_by  Student  @relation(fields: [studentId], references: [id])
+  created_by   Teacher  @relation(fields: [teacherId], references: [id])
+  created_date DateTime @default(now())
+  updated_date DateTime @default(now())
+  booksId      String   @db.ObjectId
+  studentId    String   @db.ObjectId
+  teacherId    String   @db.ObjectId
+}
+
+model ReturnBook {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  book_id      Books    @relation(fields: [booksId], references: [id])
+  return_by    Student  @relation(fields: [studentId], references: [id])
+  created_by   Teacher  @relation(fields: [teacherId], references: [id])
+  created_date DateTime @default(now())
+  updated_date DateTime @default(now())
+  booksId      String   @db.ObjectId
+  studentId    String   @db.ObjectId
+  teacherId    String   @db.ObjectId
+}
+
+enum OccupationType {
+  Professor
+  AssociateProfesser
+  Lecturer
+  Tutor
+  Demonstrator
+  Officer
+  Others
+}
+
+enum CurrentYearType {
+  First
+  Second
+  Third
+  Fourth
+  Fifth
+  Final
+}
