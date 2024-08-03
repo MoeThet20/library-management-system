@@ -8,7 +8,7 @@ interface TextInputProps {
   options: Array<{ value: string; label: string }>;
 }
 
-const TextInput: React.FC<TextInputProps> = ({ name, label, options }) => {
+const Select: React.FC<TextInputProps> = ({ name, label, options }) => {
   return (
     <Field name={name}>
       {({ field, meta }: FieldProps) => (
@@ -33,4 +33,4 @@ const TextInput: React.FC<TextInputProps> = ({ name, label, options }) => {
   );
 };
 
-export default TextInput;
+export default Select;
