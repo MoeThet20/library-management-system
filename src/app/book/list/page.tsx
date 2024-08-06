@@ -14,41 +14,25 @@ import {
 } from "@mui/material";
 
 const data = [
-  {
-    id: 1,
-    name: "Khine Zaw Htet",
-    role_no: "6EC-1",
-    current_year: 'Final Year',
-    created_date: '1/8/2024',
-    updated_date: '1/8/2024',
-    created_by: "Daw Aye Aye",
-  },
-  {
-    id: 2,
-    name: "Ko Khine Gyi",
-    role_no: "6EC-2",
-    current_year: 'Final Year',
-    created_date: '1/8/2024',
-    updated_date: '1/8/2024',
-    created_by: "Daw Aye Aye",
-  },
-  {
-    id: 3,
-    name: "Moe Thet",
-    role_no: "6EC-3",
-    current_year: 'Final Year',
-    created_date: '1/8/2024',
-    updated_date: '1/8/2024',
-    created_by: "Daw Aye Aye",
-  },
+ {
+  id:1,
+  title: 'Networking',
+  author: 'Khine Zaw Htet',
+  isbn: 'isbn',
+  category: 'IT',
+  publication_date:  '21/6/2000',
+  amount: '20000MMK',
+  place: 'First stand',
+  created_by: 'Thet Hnin'
+ }
 ];
 
-export default function StudentList() {
+export default function BookList() {
   return (
     <Container component="main" maxWidth="lg">
       <CssBaseline />
       <Typography align="center" mt={2} mb={2} component="h1" variant="h5">
-        Student List
+        Book List
       </Typography>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
@@ -66,11 +50,13 @@ export default function StudentList() {
                 />
               </TableCell>
               <TableCell>Id</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Role Number</TableCell>
-              <TableCell align="right">Current Year</TableCell>
-              <TableCell align="right">Created date</TableCell>
-              <TableCell align="right">Updated date</TableCell>
+              <TableCell>Title</TableCell>
+              <TableCell>Author</TableCell>
+              <TableCell align="right">ISBN</TableCell>
+              <TableCell align="right">Categories</TableCell>
+              <TableCell align="right">Publication Date</TableCell>
+              <TableCell align="right">Amount</TableCell>
+              <TableCell align="right">Place</TableCell>
               <TableCell align="right">Created By</TableCell>
             </TableRow>
           </TableHead>
@@ -85,12 +71,15 @@ export default function StudentList() {
                 <TableCell component="th" scope="row">
                   {row.id}
                 </TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.role_no}</TableCell>
-                <TableCell align="right">{row.current_year}</TableCell>
-                <TableCell align="right">{row.created_date}</TableCell>
-                <TableCell align="right">{row.updated_date}</TableCell>
+                <TableCell>{row.title}</TableCell>
+                <TableCell>{row.author}</TableCell>
+                <TableCell align="right">{row.isbn}</TableCell>
+                <TableCell align="right">{row.category}</TableCell>
+                <TableCell align="right">{row.publication_date}</TableCell>
+                <TableCell align="right">{row.amount}</TableCell>
+                <TableCell align="right">{row.place}</TableCell>
                 <TableCell align="right">{row.created_by}</TableCell>
+
               </TableRow>
             ))}
           </TableBody>
