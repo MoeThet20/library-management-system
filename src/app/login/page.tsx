@@ -46,6 +46,7 @@ export default function SignIn() {
           alignItems: "center",
         }}
       >
+        <Image src="/next.svg" alt="Hello" width={50} height={50} />
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>

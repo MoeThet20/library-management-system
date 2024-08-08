@@ -5,7 +5,7 @@ import {
   CHECK_IN,
   USER_DASHBOARD,
   USER_PATHS,
-} from "./const/routes";
+} from "@/const/routes";
 
 const ADMIN = "ADMIN";
 const STAFF = "STAFF";
@@ -48,5 +48,5 @@ export default withAuth(
   }
 );
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [],
 };

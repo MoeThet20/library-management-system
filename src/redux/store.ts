@@ -3,7 +3,7 @@ import { combineReducers } from "redux";
 import { persistReducer } from "redux-persist";
 import { thunk } from "redux-thunk";
 import messageModalSlice from "./features/messageModalSlice";
-import storage from "redux-persist/lib/storage";
+import { storage } from "./storage";
 
 const reducers = combineReducers({
   messageModal: messageModalSlice,
