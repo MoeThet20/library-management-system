@@ -17,7 +17,6 @@ import { Formik, Form } from "formik";
 
 import { Select, TextInput } from "@/components/common";
 
-import useRedirectIfAuthenticated from "@/hook/useRedirectIfAuthenticated";
 interface Column {
   id:
     | "name"
@@ -90,8 +89,6 @@ const rows = [
 ];
 
 export default function TeacherList() {
-  useRedirectIfAuthenticated();
-
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 

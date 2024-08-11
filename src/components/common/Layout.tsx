@@ -17,8 +17,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import Face4Icon from "@mui/icons-material/Face4";
 import Face3Icon from "@mui/icons-material/Face3";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
@@ -26,8 +24,12 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { Colors } from "@/const/colors";
 import Image from "next/image";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { LOGIN } from "@/const/routes";
 
 const drawerWidth = 240;
+const LOGOUT = "logout";
 
 const DRAWER_LIST = [
   {
@@ -38,7 +40,7 @@ const DRAWER_LIST = [
   {
     title: "Teacher",
     icon: <Face4Icon sx={{ color: Colors.white }} />,
-    routeName: "/admin/teacher",
+    routeName: "/admin/teacher/list",
   },
   {
     title: "Student",
@@ -53,7 +55,7 @@ const DRAWER_LIST = [
   {
     title: "Logout",
     icon: <LogoutIcon sx={{ color: Colors.white }} />,
-    routeName: "/logout",
+    routeName: LOGOUT,
   },
 ];
 
@@ -83,7 +85,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
@@ -132,6 +133,7 @@ interface AppProps {
 
 const Page: React.FC<AppProps> = ({ children }) => {
   const theme = useTheme();
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState("");
 
@@ -141,6 +143,15 @@ const Page: React.FC<AppProps> = ({ children }) => {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleGoToRoute = (route: string, title: string) => {
+    setSelectedItem(title);
+    if (route === LOGOUT) {
+      signOut({ callbackUrl: LOGIN });
+      return;
+    }
+    router.push(route);
   };
 
   return (
@@ -179,7 +190,7 @@ const Page: React.FC<AppProps> = ({ children }) => {
             <Typography
               style={{ fontWeight: "bold", color: Colors.white, marginLeft: 8 }}
             >
-              TU (Maubin)
+              TU ( Maubin )
             </Typography>
           </div>
 
@@ -198,7 +209,7 @@ const Page: React.FC<AppProps> = ({ children }) => {
               key={index}
               disablePadding
               sx={{ display: "block" }}
-              onClick={() => setSelectedItem(item?.title)}
+              onClick={() => handleGoToRoute(item.routeName, item.title)}
             >
               <ListItemButton
                 sx={{
