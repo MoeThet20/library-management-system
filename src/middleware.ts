@@ -2,34 +2,25 @@ import { NextRequestWithAuth, withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 import {
   ADMIN_DASHBOARD,
-  CHECK_IN,
+  LOGIN,
+  PUBLIC_ROUTE,
   USER_DASHBOARD,
-  USER_PATHS,
 } from "@/const/routes";
 
-const ADMIN = "ADMIN";
-const STAFF = "STAFF";
+const ADMIN = "admin";
 
 export default withAuth(
   function middleware(req: NextRequestWithAuth) {
     const pathName = req.nextUrl.pathname;
     const userToken: any = req.nextauth.token;
 
+    console.log(userToken);
+
     if (!userToken) return;
-
-    const isIncludeUserRoutes = USER_PATHS.includes(pathName);
+    const isPublicRoutes = PUBLIC_ROUTE.includes(pathName);
     const isAdmin = userToken?.user?.role === ADMIN;
-    const isStaff = userToken?.user?.role === STAFF;
 
-    if (isStaff && pathName !== CHECK_IN && pathName !== USER_DASHBOARD) {
-      return NextResponse.redirect(new URL(CHECK_IN, req.url));
-    }
-
-    // if (isIncludeAdminRoutes && !isAdmin) {
-    //   return NextResponse.redirect(new URL(USER_DASHBOARD, req.url));
-    // }
-
-    if (isIncludeUserRoutes && isAdmin) {
+    if (isPublicRoutes && isAdmin) {
       return NextResponse.redirect(new URL(ADMIN_DASHBOARD, req.url));
     }
   },
@@ -43,10 +34,10 @@ export default withAuth(
       },
     },
     pages: {
-      signIn: "/login",
+      signIn: LOGIN,
     },
   }
 );
 export const config = {
-  matcher: [],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

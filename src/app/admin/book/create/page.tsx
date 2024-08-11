@@ -15,12 +15,9 @@ import { Formik, Form } from "formik";
 
 import { Select, TextInput } from "@/components/common";
 
-import useRedirectIfAuthenticated from "@/hook/useRedirectIfAuthenticated";
 import { YEARS } from "@/const";
 
 export default function BookCreate() {
-  useRedirectIfAuthenticated();
-
   const handleSubmit = async (values: any) => {};
 
   return (
@@ -47,11 +44,7 @@ export default function BookCreate() {
               <TextInput name="author" label="Author" />
               <TextInput name="isbn" label="ISBN" />
 
-              <Select
-                name="categories"
-                label="Categories"
-                options={YEARS}
-              />
+              <Select name="categories" label="Categories" options={YEARS} />
               <TextInput name="description" label="Description" />
               <TextInput name="publication_date" label="Publication Date" />
               <TextInput name="amount" label="Amount" />

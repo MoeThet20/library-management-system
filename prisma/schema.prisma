@@ -21,6 +21,7 @@ model Teacher {
   rfid         String         @unique
   phone_number String
   occupation   OccupationType
+  role         String         @default("admin")
   created_date DateTime       @default(now())
   updated_date DateTime       @default(now())
   Student      Student[]

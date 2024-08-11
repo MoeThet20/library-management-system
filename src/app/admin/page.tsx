@@ -1,7 +1,14 @@
+"use client";
+
+import { Layout } from "@/components/common";
 import React from "react";
 
 function Dashboard() {
-  return <div>Dashboard</div>;
+  return (
+    <Layout>
+      <div>Dashboard</div>
+    </Layout>
+  );
 }
 
 export default Dashboard;

@@ -1,20 +1,15 @@
 "use client";
-
 import * as React from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { styled, useTheme } from "@mui/material/styles";
-import {
-  Box,
-  Drawer,
-  CssBaseline,
-  Toolbar,
-  List,
-  Typography,
-  Divider,
-  IconButton,
-} from "@mui/material";
-
+import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import List from "@mui/material/List";
+import CssBaseline from "@mui/material/CssBaseline";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -22,53 +17,68 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+import Face4Icon from "@mui/icons-material/Face4";
+import Face3Icon from "@mui/icons-material/Face3";
+import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import PeopleIcon from "@mui/icons-material/People";
-import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
-import VerifiedIcon from "@mui/icons-material/Verified";
-import LogoutIcon from "@mui/icons-material/Logout";
-import { signOut, useSession } from "next-auth/react";
-import { LOGIN } from "@/const/routes";
-import { useAppDispatch } from "@/hook/ReduxHooks";
-import { disableMessageModal } from "@/redux/features/messageModalSlice";
+import { Colors } from "@/const/colors";
+import Image from "next/image";
 
 const drawerWidth = 240;
-const LOGOUT = "logout";
-const ADMIN = "ADMIN";
-const STAFF_SIDE_BAR_LIST = [
-  { description: "Check In", route: "/admin/checkIn", icon: VerifiedIcon },
-  { description: "Logout", route: LOGOUT, icon: LogoutIcon },
-];
 
-const ADMIN_SIDE_BAR_LIST = [
-  { description: "Dashboard", route: "/admin/dashboard", icon: DashboardIcon },
-  { description: "Users", route: "/admin/users", icon: PeopleIcon },
+const drawer_list = [
   {
-    description: "Tickets",
-    route: "/admin/ticket",
-    icon: ConfirmationNumberIcon,
+    title: "Dashboard",
+    icon: <DashboardIcon sx={{ color: Colors.white }} />,
+    routeName: "/",
   },
-  { description: "Check In", route: "/admin/checkIn", icon: VerifiedIcon },
-  { description: "Logout", route: LOGOUT, icon: LogoutIcon },
+  {
+    title: "Teacher",
+    icon: <Face4Icon sx={{ color: Colors.white }} />,
+    routeName: "/teacher",
+  },
+  {
+    title: "Student",
+    icon: <Face3Icon sx={{ color: Colors.white }} />,
+    routeName: "/student",
+  },
+  {
+    title: "Book",
+    icon: <AutoStoriesIcon sx={{ color: Colors.white }} />,
+    routeName: "/book",
+  },
 ];
 
-const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
-  open?: boolean;
-}>(({ theme, open }) => ({
-  flexGrow: 1,
-  padding: theme.spacing(3),
-  transition: theme.transitions.create("margin", {
+const openedMixin = (theme: Theme): CSSObject => ({
+  width: drawerWidth,
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: "hidden",
+});
+
+const closedMixin = (theme: Theme): CSSObject => ({
+  transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  marginLeft: `-${drawerWidth}px`,
-  ...(open && {
-    transition: theme.transitions.create("margin", {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    marginLeft: 0,
-  }),
+  overflowX: "hidden",
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up("sm")]: {
+    width: `calc(${theme.spacing(8)} + 1px)`,
+  },
+});
+
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
 }));
 
 interface AppBarProps extends MuiAppBarProps {
@@ -78,43 +88,46 @@ interface AppBarProps extends MuiAppBarProps {
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<AppBarProps>(({ theme, open }) => ({
-  transition: theme.transitions.create(["margin", "width"], {
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
+    marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(["margin", "width"], {
-      easing: theme.transitions.easing.easeOut,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
 }));
 
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-  justifyContent: "flex-end",
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  width: drawerWidth,
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+  ...(open && {
+    ...openedMixin(theme),
+    "& .MuiDrawer-paper": openedMixin(theme),
+  }),
+  ...(!open && {
+    ...closedMixin(theme),
+    "& .MuiDrawer-paper": closedMixin(theme),
+  }),
 }));
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  const dispatch = useAppDispatch();
-  const { data: session } = useSession();
-  const router = useRouter();
-  const isAdmin = session?.user?.role === ADMIN;
-  const SIDE_BAR_LIST = isAdmin ? ADMIN_SIDE_BAR_LIST : STAFF_SIDE_BAR_LIST;
+interface AppProps {
+  children: React.ReactNode;
+}
 
-  React.useEffect(() => {
-    dispatch(disableMessageModal());
-  }, []);
-
-  const pathName = usePathname();
-
+const Page: React.FC<AppProps> = ({ children }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [selectedItem, setSelectedItem] = React.useState("");
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -124,75 +137,106 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     setOpen(false);
   };
 
-  const handleGoToRoute = (route: string) => {
-    if (route === LOGOUT) {
-      signOut({ callbackUrl: LOGIN });
-      return;
-    }
-    router.push(route);
-  };
-
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Toolbar>
+        <Toolbar sx={{ backgroundColor: Colors.primary_color }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
-            sx={{ mr: 2, ...(open && { display: "none" }) }}
+            sx={{
+              marginRight: 5,
+              ...(open && { display: "none" }),
+            }}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Ticket Management System
+            Library Management System
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
-        variant="persistent"
-        anchor="left"
-        open={open}
-      >
-        <DrawerHeader>
+      <Drawer variant="permanent" open={open}>
+        <DrawerHeader sx={{ backgroundColor: Colors.primary_color }}>
+          <div
+            style={{
+              display: "flex",
+              flex: 1,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Image src="/logo.jpg" width={50} height={50} alt="logo" />
+            <Typography
+              style={{ fontWeight: "bold", color: Colors.white, marginLeft: 8 }}
+            >
+              TU (Maubin)
+            </Typography>
+          </div>
+
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
+            {theme.direction === "rtl" ? (
+              <ChevronRightIcon sx={{ color: Colors.white }} />
             ) : (
-              <ChevronRightIcon />
+              <ChevronLeftIcon sx={{ color: Colors.white }} />
             )}
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List>
-          {SIDE_BAR_LIST.map((sideBar, index) => (
+        <List sx={{ backgroundColor: Colors.primary_color, height: "100vh" }}>
+          {drawer_list?.map((item, index) => (
             <ListItem
               key={index}
               disablePadding
-              onClick={() => handleGoToRoute(sideBar.route)}
+              sx={{ display: "block" }}
+              onClick={() => setSelectedItem(item?.title)}
             >
-              <ListItemButton selected={pathName === sideBar.route}>
-                <ListItemIcon>{<sideBar.icon />}</ListItemIcon>
-                <ListItemText primary={sideBar.description} />
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  {item?.icon}
+                </ListItemIcon>
+                <ListItemText
+                  primary={item?.title}
+                  sx={{
+                    opacity: open ? 1 : 0,
+                    color:
+                      selectedItem === item?.title
+                        ? Colors.secondary_color
+                        : Colors.white,
+                  }}
+                />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
       </Drawer>
-      <Main open={open}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          height: "100vh",
+        }}
+      >
         <DrawerHeader />
         {children}
-      </Main>
+      </Box>
     </Box>
   );
-}
+};
+export default Page;

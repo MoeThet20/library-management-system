@@ -5,13 +5,10 @@ import { Formik, Form } from "formik";
 
 import { Select, TextInput } from "@/components/common";
 
-import useRedirectIfAuthenticated from "@/hook/useRedirectIfAuthenticated";
 import { OCCUPATION } from "@/const";
 import { teacherRegister } from "@/services/teacher.service";
 
 export default function TeacherCreate() {
-  useRedirectIfAuthenticated();
-
   const handleSubmit = async (values: any) => {
     console.log(values);
     await teacherRegister(values);

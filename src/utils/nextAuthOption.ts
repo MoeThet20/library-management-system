@@ -10,18 +10,18 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        username: { type: "text", placeholder: "test@test.com" },
+        email: { type: "text", placeholder: "test@test.com" },
         password: { type: "text", placeholder: "password" },
       },
       //@ts-ignore
       async authorize(credentials) {
-        if (!credentials?.username || !credentials.password) return null;
+        if (!credentials?.email || !credentials.password) return null;
 
-        const { username, password } = credentials;
+        const { email, password } = credentials;
 
         try {
           const user = await prisma.teacher.findUnique({
-            where: { email: username },
+            where: { email: email },
           });
 
           const isPasswordCorrect =
@@ -31,7 +31,8 @@ export const authOptions: NextAuthOptions = {
             return {
               id: user.id,
               name: user.name,
-              username: user.username,
+              email: user.email,
+              occupation: user.occupation,
               role: user.role,
             };
           }
