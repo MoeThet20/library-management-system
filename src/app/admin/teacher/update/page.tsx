@@ -9,18 +9,25 @@ import {
 } from "@mui/material";
 import { Formik, Form } from "formik";
 
-import { Select, TextInput } from "@/components/common";
+import { Select, TextInput, Layout } from "@/components/common";
 
 import useRedirectIfAuthenticated from "@/hook/useRedirectIfAuthenticated";
 import { OCCUPATION } from "@/const";
+import { useRouter } from "next/navigation";
+import { Colors } from "@/const/colors";
+
 
 
 export default function TeacherUpdate() {
-  useRedirectIfAuthenticated();
+  const router = useRouter()
 
-  const handleSubmit = async (values: any) => {};
+  const handleSubmit = async (values: any) => {
+      await teacherRegister(values);
+      router.push('/admin/teacher/list')
+  };
 
   return (
+    <Layout>
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Box
@@ -49,7 +56,7 @@ export default function TeacherUpdate() {
                 disabled={isSubmitting}
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{ mt: 3, mb: 2, backgroundColor: Colors.primary_color }}
               >
                 Update
               </Button>
@@ -58,5 +65,6 @@ export default function TeacherUpdate() {
         </Formik>
       </Box>
     </Container>
+    </Layout>
   );
 }
