@@ -22,32 +22,38 @@ import MailIcon from "@mui/icons-material/Mail";
 import Face4Icon from "@mui/icons-material/Face4";
 import Face3Icon from "@mui/icons-material/Face3";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
+import LogoutIcon from "@mui/icons-material/Logout";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { Colors } from "@/const/colors";
 import Image from "next/image";
 
 const drawerWidth = 240;
 
-const drawer_list = [
+const DRAWER_LIST = [
   {
     title: "Dashboard",
     icon: <DashboardIcon sx={{ color: Colors.white }} />,
-    routeName: "/",
+    routeName: "/admin",
   },
   {
     title: "Teacher",
     icon: <Face4Icon sx={{ color: Colors.white }} />,
-    routeName: "/teacher",
+    routeName: "/admin/teacher",
   },
   {
     title: "Student",
     icon: <Face3Icon sx={{ color: Colors.white }} />,
-    routeName: "/student",
+    routeName: "/admin/student",
   },
   {
     title: "Book",
     icon: <AutoStoriesIcon sx={{ color: Colors.white }} />,
-    routeName: "/book",
+    routeName: "/admin/book",
+  },
+  {
+    title: "Logout",
+    icon: <LogoutIcon sx={{ color: Colors.white }} />,
+    routeName: "/logout",
   },
 ];
 
@@ -187,7 +193,7 @@ const Page: React.FC<AppProps> = ({ children }) => {
         </DrawerHeader>
         <Divider />
         <List sx={{ backgroundColor: Colors.primary_color, height: "100vh" }}>
-          {drawer_list?.map((item, index) => (
+          {DRAWER_LIST.map((item, index) => (
             <ListItem
               key={index}
               disablePadding
