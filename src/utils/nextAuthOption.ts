@@ -20,8 +20,8 @@ export const authOptions: NextAuthOptions = {
         const { username, password } = credentials;
 
         try {
-          const user = await prisma.user.findUnique({
-            where: { username: username },
+          const user = await prisma.teacher.findUnique({
+            where: { email: username },
           });
 
           const isPasswordCorrect =

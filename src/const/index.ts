@@ -12,13 +12,13 @@ export const convertDateString = (
 ) => dayjs(date).format(format).toString();
 
 export const OCCUPATION = [
-  { value: "professor", label: "Professor" },
-  { value: "associate_professor", label: "Associate Professor" },
-  { value: "lecturer", label: "Lecturer" },
-  { value: "tutor", label: "Tutor" },
-  { value: "demonstrator", label: "Demonstrator" },
-  { value: "officer", label: "Officer" },
-  { value: "others", label: "Others" },
+  { value: "Professor", label: "Professor" },
+  { value: "AssociateProfessor", label: "Associate Professor" },
+  { value: "Lecturer", label: "Lecturer" },
+  { value: "Tutor", label: "Tutor" },
+  { value: "Demonstrator", label: "Demonstrator" },
+  { value: "Officer", label: "Officer" },
+  { value: "Others", label: "Others" },
 ];
 export const YEARS = [
   { value: "first", label: "First Year" },

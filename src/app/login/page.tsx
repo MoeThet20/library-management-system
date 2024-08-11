@@ -17,22 +17,25 @@ import { useRouter } from "next/navigation";
 import { TextInput } from "@/components/common";
 
 import useRedirectIfAuthenticated from "@/hook/useRedirectIfAuthenticated";
+import { LOGIN_FORM_TYPE, LOGIN_INITIAL_VALUES } from "@/initialValues/auth";
+import validation from "@/validation/auth.service";
+import { ADMIN_DASHBOARD } from "@/const/routes";
 
 export default function SignIn() {
   const router = useRouter();
   useRedirectIfAuthenticated();
 
-  const handleSubmit = async (values: any) => {
-    // const res = await signIn("credentials", {
-    //   username: values.username,
-    //   password: values.password,
-    //   redirect: false,
-    // });
-    // if (res?.ok && res?.status === 200) {
-    //   router.replace(ADMIN_DASHBOARD);
-    //   return;
-    // }
-    // alert("Invalid Username or Password");
+  const handleSubmit = async (values: LOGIN_FORM_TYPE) => {
+    const res = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: false,
+    });
+    if (res?.ok && res?.status === 200) {
+      router.replace(ADMIN_DASHBOARD);
+      return;
+    }
+    alert("Invalid Username or Password");
   };
 
   return (
@@ -46,19 +49,24 @@ export default function SignIn() {
           alignItems: "center",
         }}
       >
-        <Image src="/next.svg" alt="Hello" width={50} height={50} />
+        <Image
+          src="/logo.jpg"
+          alt="Hello"
+          width={200}
+          height={200}
+          className="mb-5"
+        />
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
         <Formik
-          initialValues={{ username: "", password: "" }}
-          // initialValues={LOGIN_INITIAL_VALUES}
-          // validationSchema={validation.loginValidationSchema}
+          initialValues={LOGIN_INITIAL_VALUES}
+          validationSchema={validation.loginValidationSchema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
             <Form>
-              <TextInput name="username" label="Username" />
+              <TextInput name="email" label="Email" />
               <TextInput name="password" label="Password" type="password" />
               <Button
                 type="submit"

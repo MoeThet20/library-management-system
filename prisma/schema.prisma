@@ -16,8 +16,9 @@ datasource db {
 model Teacher {
   id           String         @id @default(auto()) @map("_id") @db.ObjectId
   name         String
+  email        String         @unique
   password     String
-  rfid         String
+  rfid         String         @unique
   phone_number String
   occupation   OccupationType
   created_date DateTime       @default(now())
@@ -96,7 +97,7 @@ model ReturnBook {
 
 enum OccupationType {
   Professor
-  AssociateProfesser
+  AssociateProfessor
   Lecturer
   Tutor
   Demonstrator

@@ -28,6 +28,7 @@ const TextInput: React.FC<TextInputProps> = ({
           helperText={meta.touched && meta.error}
           variant="outlined"
           fullWidth
+          autoComplete="on"
         />
       )}
     </Field>

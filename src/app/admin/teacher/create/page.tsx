@@ -1,23 +1,20 @@
 "use client";
 import * as React from "react";
-import {
-  Button,
-  CssBaseline,
-  Box,
-  Typography,
-  Container,
-} from "@mui/material";
+import { Button, CssBaseline, Box, Typography, Container } from "@mui/material";
 import { Formik, Form } from "formik";
 
 import { Select, TextInput } from "@/components/common";
 
 import useRedirectIfAuthenticated from "@/hook/useRedirectIfAuthenticated";
-import {OCCUPATION} from "@/const"
+import { OCCUPATION } from "@/const";
+import { teacherRegister } from "@/services/teacher.service";
 
 export default function TeacherCreate() {
   useRedirectIfAuthenticated();
 
-  const handleSubmit = async (values: any) => {};
+  const handleSubmit = async (values: any) => {
+    await teacherRegister(values);
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -41,8 +38,13 @@ export default function TeacherCreate() {
             <Form>
               <TextInput name="name" label="Name" />
               <TextInput name="password" label="Password" type="password" />
-              <TextInput name="phone_number" label="Phone Number" />
-              <Select name="occupation" label="Occupation" options={OCCUPATION} />
+              <TextInput name="phoneNumber" label="Phone Number" />
+              <TextInput name="rfid" label="RFID" />
+              <Select
+                name="occupation"
+                label="Occupation"
+                options={OCCUPATION}
+              />
               <Button
                 type="submit"
                 disabled={isSubmitting}
