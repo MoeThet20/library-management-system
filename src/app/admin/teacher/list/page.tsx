@@ -13,14 +13,15 @@ import {
   TableCell,
   TableBody,
   Stack,
-  IconButton
+  IconButton,
 } from "@mui/material";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import { Formik, Form } from "formik";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Colors } from "@/const/colors";
 import { Select, TextInput, Layout } from "@/components/common";
 import { useRouter } from "next/navigation";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 // interface Column {
 //   id:
@@ -93,10 +94,12 @@ import { useRouter } from "next/navigation";
 //   ),
 // ];
 
-
 export default function TeacherList() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [selectionModel, setSelectionModel] = React.useState([]);
+  // const [rowws, setRowws] = React.useState(rows);
+
   const router = useRouter();
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 70 },
@@ -107,23 +110,30 @@ export default function TeacherList() {
     { field: "occupation", headerName: "Occupation", width: 130 },
     { field: "created_date", headerName: "Created Date", width: 120 },
     {
-      field: 'edit',
-      headerName: '',
+      field: "edit",
+      headerName: "",
       width: 100,
       renderCell: (params) => (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', width: '100%' }}>
-        <IconButton
-          sx={{color: Colors.primary_color}}
-          aria-label="edit"
-          onClick={() => handleEditClick(params.row.id)}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "flex-end",
+            width: "100%",
+          }}
         >
-          <EditIcon />
-        </IconButton>
+          <IconButton
+            sx={{ color: Colors.primary_color }}
+            aria-label="edit"
+            onClick={() => handleEditClick(params.row.id)}
+          >
+            <EditIcon />
+          </IconButton>
         </div>
       ),
     },
   ];
-  
+
   const rows = [
     {
       id: 1,
@@ -133,7 +143,6 @@ export default function TeacherList() {
       rfid: "123456789",
       occupation: "Professor",
       created_date: "11/8/2024",
-      
     },
     {
       id: 2,
@@ -208,29 +217,50 @@ export default function TeacherList() {
       created_date: "11/8/2024",
     },
   ];
-  
+
   const handleEditClick = (id: number) => {
     // alert(`Edit row with ID: ${id}`);
-    router.push('/admin/teacher/update');
+    router.push("/admin/teacher/update");
   };
 
-  const handleCreateTeacher =() =>{
-    router.push('/admin/teacher/create');
-  }
-  
+  const handleCreateTeacher = () => {
+    router.push("/admin/teacher/create");
+  };
+
+  const handleDelete = () => {
+    // const newRows = rows.filter((row) => !selectionModel.includes(row.id));
+    // setRows(newRows);
+  };
+
   return (
     <Layout>
       <Container component="main" maxWidth="lg">
         <CssBaseline />
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+        >
           <Typography component="h1" variant="h5">
             Teacher List
           </Typography>
-          <Button 
-          variant="contained"
-           sx={{backgroundColor: Colors.primary_color}}
-           onClick={handleCreateTeacher}>Create</Button>
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: Colors.primary_color }}
+            onClick={handleCreateTeacher}
+          >
+            Create
+          </Button>
         </Box>
+        <IconButton
+          sx={{ color: Colors.primary_color }}
+          aria-label="edit"
+          disabled={selectionModel.length === 0}
+          onClick={handleDelete}
+        >
+          <DeleteIcon />
+        </IconButton>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -241,6 +271,9 @@ export default function TeacherList() {
           }}
           pageSizeOptions={[5, 10]}
           checkboxSelection
+          onRowSelectionModelChange={(newSelection: any) => {
+            setSelectionModel(newSelection);
+          }}
         />
         {/* <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">

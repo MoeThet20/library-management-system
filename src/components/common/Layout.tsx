@@ -241,6 +241,9 @@ const Page: React.FC<AppProps> = ({ children }) => {
             </ListItem>
           ))}
         </List>
+        {open &&<div style={{display: 'flex', flex: 1, backgroundColor: Colors.primary_color, padding: 12}}>
+          <p style={{color: Colors.white, fontSize: 12}}>Developed by Khine Zaw Htet</p>
+        </div>}
       </Drawer>
       <Box
         component="main"
