@@ -14,8 +14,6 @@ export default withAuth(
     const pathName = req.nextUrl.pathname;
     const userToken: any = req.nextauth.token;
 
-    console.log(userToken);
-
     if (!userToken) return;
     const isPublicRoutes = PUBLIC_ROUTE.includes(pathName);
     const isAdmin = userToken?.user?.role === ADMIN;

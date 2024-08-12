@@ -5,34 +5,32 @@ import { CONFLICT, SUCCESS } from "@/const/status";
 
 const prisma = new PrismaClient();
 
-const saltRounds = 10;
-
 export async function POST(request: NextRequest) {
   const data = await request.json();
-  const { name, email, password, rfid, phoneNumber, occupation } = data;
 
-  const findTeacher = await prisma.teacher.findUnique({
-    where: { email: email },
+  const { name, roleNumber, initialYear, currentYear, phoneNumber, teacherId } =
+    data;
+
+  const findStudent = await prisma.student.findUnique({
+    where: { initial_year: initialYear },
   });
 
-  if (findTeacher) {
-    return NextResponse.json({ error: "Teacher already exist" }, CONFLICT);
+  if (findStudent) {
+    return NextResponse.json({ error: `${name} already exist` }, CONFLICT);
   }
 
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-  const teacher = await prisma.teacher.create({
+  const student = await prisma.student.create({
     data: {
       name,
-      email,
-      password: hashedPassword,
-      rfid,
+      role_number: roleNumber,
+      initial_year: initialYear,
+      current_year: currentYear,
       phone_number: phoneNumber,
-      occupation,
+      created_by: { connect: { id: teacherId } },
     },
   });
 
-  return NextResponse.json(teacher, SUCCESS);
+  return NextResponse.json(student, SUCCESS);
 }
 
 export async function GET(request: NextRequest) {
@@ -47,21 +45,19 @@ export async function GET(request: NextRequest) {
   const size = pageSize;
   const searchTerm = search;
 
-  const totalTeachers = await prisma.teacher.count({
+  const totalStudents = await prisma.student.count({
     where: {
       OR: [
         { name: { contains: searchTerm, mode: "insensitive" } },
-        { rfid: { contains: searchTerm, mode: "insensitive" } },
         { phone_number: { contains: searchTerm, mode: "insensitive" } },
       ],
     },
   });
 
-  const teachers = await prisma.teacher.findMany({
+  const students = await prisma.student.findMany({
     where: {
       OR: [
         { name: { contains: searchTerm, mode: "insensitive" } },
-        { rfid: { contains: searchTerm, mode: "insensitive" } },
         { phone_number: { contains: searchTerm, mode: "insensitive" } },
       ],
     },
@@ -69,12 +65,12 @@ export async function GET(request: NextRequest) {
     take: size,
   });
 
-  const teachersRes = {
-    total: totalTeachers,
+  const studentRes = {
+    total: totalStudents,
     page: pageNumber,
     pageSize: size,
-    list: teachers,
+    list: students,
   };
 
-  return NextResponse.json(teachersRes, SUCCESS);
+  return NextResponse.json(studentRes, SUCCESS);
 }

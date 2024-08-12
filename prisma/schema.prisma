@@ -35,7 +35,9 @@ model Student {
   id           String          @id @default(auto()) @map("_id") @db.ObjectId
   name         String
   role_number  Int
+  initial_year String          @unique
   current_year CurrentYearType
+  phone_number String
   created_by   Teacher         @relation(fields: [teacherId], references: [id])
   teacherId    String          @db.ObjectId
   created_date DateTime        @default(now())
@@ -46,7 +48,7 @@ model Student {
 
 model Category {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  category     String
+  category     String   @unique
   created_by   Teacher  @relation(fields: [teacherId], references: [id])
   created_date DateTime @default(now())
   updated_date DateTime @default(now())

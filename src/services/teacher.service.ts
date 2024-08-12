@@ -21,13 +21,15 @@ export const teacherRegister = async (data: TEACHER_REGISTER_TYPE) => {
 export const teacherUpdate = async (data: TEACHER_UPDATE_TYPE) => {
   const res = await lmsClient.patch(`${TEACHER}/${data.id}`, {
     name: data.name,
-    username: data.username,
-    role: data.role,
+    rfid: data,
+    phoneNumber: data.phoneNumber,
+    occupation: data.occupation,
   });
+
   return res;
 };
 
-export const getUsersWithQuery = async (
+export const getTeacherWithQuery = async (
   page: number = 1,
   pageSize: number = 10,
   search: string = ""
@@ -37,3 +39,6 @@ export const getUsersWithQuery = async (
   );
   return res?.data;
 };
+
+export const teacherDelete = async (id: string) =>
+  await lmsClient.delete(`${TEACHER}/${id}`);

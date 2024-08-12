@@ -10,7 +10,6 @@ import { teacherRegister } from "@/services/teacher.service";
 
 export default function TeacherCreate() {
   const handleSubmit = async (values: any) => {
-    console.log(values);
     await teacherRegister(values);
   };
 
