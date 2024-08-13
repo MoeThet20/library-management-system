@@ -3,14 +3,15 @@ import * as React from "react";
 import { Button, CssBaseline, Box, Typography, Container } from "@mui/material";
 import { Formik, Form } from "formik";
 
-import { Select, TextInput } from "@/components/common";
-
+import { Select, TextInput, Layout } from "@/components/common";
+import { Colors } from "@/const/colors";
 import { YEARS } from "@/const";
 
 export default function BookUpdate() {
   const handleSubmit = async (values: any) => {};
 
   return (
+    <Layout>
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Box
@@ -46,7 +47,7 @@ export default function BookUpdate() {
                 disabled={isSubmitting}
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{ mt: 3, mb: 2, backgroundColor: Colors.primary_color }}
               >
                 Update
               </Button>
@@ -55,5 +56,6 @@ export default function BookUpdate() {
         </Formik>
       </Box>
     </Container>
+    </Layout>
   );
 }

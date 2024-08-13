@@ -7,13 +7,15 @@ import { Select, TextInput } from "@/components/common";
 
 import useRedirectIfAuthenticated from "@/hook/useRedirectIfAuthenticated";
 import { YEARS } from "@/const";
+import { Layout } from "@/components/common";
+import { Colors } from "@/const/colors";
 
 export default function StudentUpdate() {
-  useRedirectIfAuthenticated();
 
   const handleSubmit = async (values: any) => {};
 
   return (
+    <Layout>
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Box
@@ -47,7 +49,7 @@ export default function StudentUpdate() {
                 disabled={isSubmitting}
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{ mt: 3, mb: 2, backgroundColor: Colors.primary_color }}
               >
                 Update
               </Button>
@@ -56,5 +58,6 @@ export default function StudentUpdate() {
         </Formik>
       </Box>
     </Container>
+    </Layout>
   );
 }

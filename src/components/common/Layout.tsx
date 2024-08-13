@@ -45,12 +45,12 @@ const DRAWER_LIST = [
   {
     title: "Student",
     icon: <Face3Icon sx={{ color: Colors.white }} />,
-    routeName: "/admin/student",
+    routeName: "/admin/student/list",
   },
   {
     title: "Book",
     icon: <AutoStoriesIcon sx={{ color: Colors.white }} />,
-    routeName: "/admin/book",
+    routeName: "/admin/book/list",
   },
   {
     title: "Logout",

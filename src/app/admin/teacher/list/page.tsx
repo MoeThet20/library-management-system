@@ -7,6 +7,12 @@ import {
   Typography,
   Container,
   IconButton,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -23,39 +29,6 @@ export default function TeacherList() {
   // const [rowws, setRowws] = React.useState(rows);
 
   const router = useRouter();
-  const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "name", headerName: "Name", width: 130 },
-    { field: "email", headerName: "Email", width: 230 },
-    { field: "phone_no", headerName: "Phone No.", width: 130 },
-    { field: "rfid", headerName: "RFID", width: 130 },
-    { field: "occupation", headerName: "Occupation", width: 130 },
-    { field: "created_date", headerName: "Created Date", width: 120 },
-    {
-      field: "edit",
-      headerName: "",
-      width: 100,
-      renderCell: (params) => (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "flex-end",
-            width: "100%",
-          }}
-        >
-          <IconButton
-            sx={{ color: Colors.primary_color }}
-            aria-label="edit"
-            onClick={() => handleEditClick(params.row.id)}
-          >
-            <EditIcon />
-          </IconButton>
-        </div>
-      ),
-    },
-  ];
-
   const rows = [
     {
       id: 1,
@@ -140,8 +113,7 @@ export default function TeacherList() {
     },
   ];
 
-  const handleEditClick = (id: number) => {
-    // alert(`Edit row with ID: ${id}`);
+  const handleEditClick = () => {
     router.push(TEACHER_UPDATE);
   };
 
@@ -150,8 +122,6 @@ export default function TeacherList() {
   };
 
   const handleDelete = () => {
-    // const newRows = rows.filter((row) => !selectionModel.includes(row.id));
-    // setRows(newRows);
   };
 
   return (
@@ -175,15 +145,59 @@ export default function TeacherList() {
             Create
           </Button>
         </Box>
-        <IconButton
-          sx={{ color: Colors.primary_color }}
-          aria-label="edit"
-          disabled={selectionModel.length === 0}
-          onClick={handleDelete}
-        >
-          <DeleteIcon />
-        </IconButton>
-        <DataGrid
+        <TableContainer sx={{ maxHeight: 440 }}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Id</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell align="right">Phone No.</TableCell>
+              <TableCell align="right">RFID</TableCell>
+              <TableCell align="right">Occupation</TableCell>
+              <TableCell align="right">Created Date</TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell component="th" scope="row">
+                  {row.id}
+                </TableCell>
+                <TableCell>{row.name}</TableCell>
+                <TableCell>{row.email}</TableCell>
+                <TableCell align="right">{row.phone_no}</TableCell>
+                <TableCell align="right">{row.rfid}</TableCell>
+                <TableCell align="right">{row.occupation}</TableCell>
+                <TableCell align="right">{row.created_date}</TableCell>
+                <TableCell align="right">
+                  <IconButton
+                    sx={{ color: Colors.primary_color }}
+                    aria-label="edit"
+                    onClick={() => handleEditClick()}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </TableCell>
+                <TableCell align="right">
+                <IconButton
+            sx={{ color: Colors.primary_color }}
+            aria-label="delete"
+            onClick={() => handleDelete()}
+          >
+            <DeleteIcon />
+          </IconButton>
+                </TableCell>
+
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      </Container>
+        {/* <DataGrid
           rows={rows}
           columns={columns}
           initialState={{
@@ -192,11 +206,7 @@ export default function TeacherList() {
             },
           }}
           pageSizeOptions={[5, 10]}
-          checkboxSelection
-          onRowSelectionModelChange={(newSelection: any) => {
-            setSelectionModel(newSelection);
-          }}
-        />
+        /> */}
         {/* <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -233,8 +243,8 @@ export default function TeacherList() {
                 })}
             </TableBody>
           </Table>
-        </TableContainer> */}
-      </Container>
+        </TableContainer>
+      </Container> */}
     </Layout>
   );
 }

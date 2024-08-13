@@ -2,18 +2,18 @@
 import * as React from "react";
 import { Button, CssBaseline, Box, Typography, Container } from "@mui/material";
 import { Formik, Form } from "formik";
-
-import { Select, TextInput } from "@/components/common";
+import { Select, TextInput,Layout } from "@/components/common";
 
 import useRedirectIfAuthenticated from "@/hook/useRedirectIfAuthenticated";
 import { YEARS } from "@/const";
+import { Colors } from "@/const/colors";
 
 export default function StudentCreate() {
-  useRedirectIfAuthenticated();
 
   const handleSubmit = async (values: any) => {};
 
   return (
+    <Layout>
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Box
@@ -47,7 +47,7 @@ export default function StudentCreate() {
                 disabled={isSubmitting}
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{ mt: 3, mb: 2, backgroundColor: Colors.primary_color }}
               >
                 Save
               </Button>
@@ -56,5 +56,6 @@ export default function StudentCreate() {
         </Formik>
       </Box>
     </Container>
+    </Layout>
   );
 }

@@ -1,17 +1,25 @@
+"use client"
 import React from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
+  Button,
+  CssBaseline,
+  Box,
+  Typography,
+  Container,
+  IconButton,
   TableContainer,
+  Table,
   TableHead,
   TableRow,
-  Paper,
-  Container,
-  CssBaseline,
-  Typography,
-  Checkbox,
+  TableCell,
+  TableBody,
 } from "@mui/material";
+import { Layout } from "@/components/common";
+import { Colors } from "@/const/colors";
+import { useRouter } from "next/navigation";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { STUDENT_CREATE, STUDENT_UPDATE } from "@/const/routes";
 
 const data = [
   {
@@ -44,27 +52,40 @@ const data = [
 ];
 
 export default function StudentList() {
+  const router = useRouter();
+
+  const handleCreateStudent = () =>{
+    router.push(STUDENT_CREATE);
+  }
+  const hadleDelete =() =>{}
+  const handleEditClick = () => {
+    router.push(STUDENT_UPDATE);
+  }
   return (
+    <Layout>
     <Container component="main" maxWidth="lg">
-      <CssBaseline />
-      <Typography align="center" mt={2} mb={2} component="h1" variant="h5">
-        Student List
-      </Typography>
+    <CssBaseline />
+    <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+        >
+          <Typography component="h1" variant="h5">
+            Student List
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: Colors.primary_color }}
+            onClick={handleCreateStudent}
+          >
+            Create
+          </Button>
+        </Box>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  color="primary"
-                  // indeterminate={numSelected > 0 && numSelected < rowCount}
-                  // checked={rowCount > 0 && numSelected === rowCount}
-                  // onChange={onSelectAllClick}
-                  // inputProps={{
-                  //   "aria-label": "select all desserts",
-                  // }}
-                />
-              </TableCell>
               <TableCell>Id</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Role Number</TableCell>
@@ -72,16 +93,13 @@ export default function StudentList() {
               <TableCell align="right">Created date</TableCell>
               <TableCell align="right">Updated date</TableCell>
               <TableCell align="right">Created By</TableCell>
+              <TableCell />
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
             {data.map((row) => (
               <TableRow key={row.id}>
-                <TableCell padding="checkbox">
-                <Checkbox
-                  color="primary"
-                />
-              </TableCell>
                 <TableCell component="th" scope="row">
                   {row.id}
                 </TableCell>
@@ -91,11 +109,30 @@ export default function StudentList() {
                 <TableCell align="right">{row.created_date}</TableCell>
                 <TableCell align="right">{row.updated_date}</TableCell>
                 <TableCell align="right">{row.created_by}</TableCell>
+                <TableCell align="right">
+                  <IconButton
+                    sx={{ color: Colors.primary_color }}
+                    aria-label="edit"
+                    onClick={() => handleEditClick()}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </TableCell>
+                <TableCell align="right">
+                <IconButton
+                  sx={{ color: Colors.primary_color }}
+                  aria-label="delete"
+                  onClick={() => handleDelete()}
+                >
+            <DeleteIcon />
+          </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
     </Container>
+    </Layout>
   );
 }
