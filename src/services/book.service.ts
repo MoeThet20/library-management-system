@@ -12,7 +12,7 @@ export const bookCreate = async (data: BOOK_CREATE_TYPE) => {
 
 export const bookUpdate = async (data: BOOK_UPDATE_TYPE) => {
   const res = await lmsClient.patch(`${BOOK}/${data.id}`, {
-    data: { ...data, isBorrowAble: true }, // need to add isBorrowAble logic
+    data: { ...data, isBorrowAble: true }, //TODO need to add isBorrowAble logic
   });
 
   return res;
