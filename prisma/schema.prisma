@@ -59,13 +59,13 @@ model Books {
   id               String       @id @default(auto()) @map("_id") @db.ObjectId
   title            String
   author           String
-  isbn             String
+  isbn             String       @unique
   categories       String[]     @db.ObjectId
   description      String
   publication_date DateTime
   amount           Int
   place            String
-  is_borrowable    Boolean
+  is_borrow_able   Boolean
   created_by       Teacher      @relation(fields: [teacherId], references: [id])
   created_date     DateTime     @default(now())
   updated_date     DateTime     @default(now())

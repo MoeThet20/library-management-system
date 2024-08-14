@@ -7,7 +7,8 @@ import { lmsClient } from "./api";
 const STUDENT = "student";
 
 export const studentRegister = async (data: STUDENT_REGISTER_TYPE) => {
-  const { name, roleNumber, initialYear, currentYear, phoneNumber } = data;
+  const { name, roleNumber, initialYear, currentYear, phoneNumber, teacherId } =
+    data;
 
   const res = await lmsClient.post(STUDENT, {
     name,
@@ -15,6 +16,7 @@ export const studentRegister = async (data: STUDENT_REGISTER_TYPE) => {
     initialYear,
     currentYear,
     phoneNumber,
+    teacherId,
   });
   return res;
 };

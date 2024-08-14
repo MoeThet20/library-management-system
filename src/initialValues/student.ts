@@ -4,6 +4,7 @@ export type STUDENT_REGISTER_TYPE = {
   initialYear: string;
   currentYear: string;
   phoneNumber: string;
+  teacherId: string;
 };
 export const STUDENT_REGISTER_INITIAL_VALUES = {
   name: "",
