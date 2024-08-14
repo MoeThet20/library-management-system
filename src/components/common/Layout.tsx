@@ -190,14 +190,30 @@ const Page: React.FC<AppProps> = ({ children }) => {
               flex: 1,
               flexDirection: "row",
               alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <Image src="/logo.jpg" width={50} height={50} alt="logo" />
-            <Typography
-              style={{ fontWeight: "bold", color: Colors.white, marginLeft: 8 }}
-            >
-              TU ( Maubin )
-            </Typography>
+            <div>
+              <Typography
+                style={{
+                  fontWeight: "bold",
+                  color: Colors.white,
+                  marginLeft: 8,
+                }}
+              >
+                Electronic
+              </Typography>
+              <Typography
+                style={{
+                  fontWeight: "bold",
+                  color: Colors.white,
+                  marginLeft: 8,
+                }}
+              >
+                Engineering
+              </Typography>
+            </div>
           </div>
 
           <IconButton onClick={handleDrawerClose}>

@@ -9,8 +9,8 @@ import { CopyRight } from "@/components";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Ticket Management System",
-  description: "TMS",
+  title: "Library Management System",
+  description: "LMS",
 };
 
 export default function RootLayout({
