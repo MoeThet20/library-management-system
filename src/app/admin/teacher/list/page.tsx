@@ -148,7 +148,7 @@ export default function TeacherList() {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <TableCell>Id</TableCell>
+                <TableCell>No</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell align="right">Phone No.</TableCell>

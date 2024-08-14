@@ -24,7 +24,7 @@ import { Button, Container, CssBaseline } from "@mui/material";
 import { Layout } from "@/components/common";
 import { useRouter } from "next/navigation";
 import EditIcon from "@mui/icons-material/Edit";
-import { BOOK_CREATE, BOOK_UPDATE } from "@/const/routes";
+import { CATEGORY_CREATE, CATEGORY_UPDATE } from "@/const/routes";
 
 interface Data {
   id: number;
@@ -69,11 +69,11 @@ export default function EnhancedTable() {
   const router = useRouter();
 
   const handleCreateBook = () => {
-    router.push(BOOK_CREATE);
+    router.push(CATEGORY_CREATE);
   };
   const handleDelete = () => {};
   const handleEditClick = () => {
-    router.push(BOOK_UPDATE);
+    router.push(CATEGORY_UPDATE);
   };
 
   return (
@@ -101,11 +101,8 @@ export default function EnhancedTable() {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <TableCell>Id</TableCell>
-                <TableCell>Title</TableCell>
-                <TableCell>Author</TableCell>
-                <TableCell align="right">ISBN</TableCell>
-                <TableCell align="right">Categories</TableCell>
+                <TableCell>No</TableCell>
+                <TableCell align="right">Category</TableCell>
                 <TableCell align="right">Created By</TableCell>
                 <TableCell align="right">Created Date</TableCell>
                 <TableCell />
@@ -118,9 +115,6 @@ export default function EnhancedTable() {
                   <TableCell component="th" scope="row">
                     {index + 1}
                   </TableCell>
-                  <TableCell>{row.title}</TableCell>
-                  <TableCell>{row.author}</TableCell>
-                  <TableCell align="right">{row.isbn}</TableCell>
                   <TableCell align="right">{row.category}</TableCell>
                   <TableCell align="right">{row.created_by}</TableCell>
                   <TableCell align="right">{row.created_date}</TableCell>

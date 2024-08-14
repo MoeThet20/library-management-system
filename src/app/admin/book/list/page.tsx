@@ -101,7 +101,7 @@ export default function EnhancedTable() {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <TableCell>Id</TableCell>
+                <TableCell>No</TableCell>
                 <TableCell>Title</TableCell>
                 <TableCell>Author</TableCell>
                 <TableCell align="right">ISBN</TableCell>

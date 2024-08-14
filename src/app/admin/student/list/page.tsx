@@ -87,7 +87,7 @@ export default function StudentList() {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <TableCell>Id</TableCell>
+                <TableCell>No</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Role Number</TableCell>
                 <TableCell align="right">Current Year</TableCell>
@@ -99,10 +99,10 @@ export default function StudentList() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((row) => (
+              {data.map((row, index) => (
                 <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
-                    {row.id}
+                    {index + 1}
                   </TableCell>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.role_no}</TableCell>

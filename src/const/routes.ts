@@ -13,6 +13,10 @@ export const STUDENT_LIST = "/admin/student/list";
 export const STUDENT_CREATE = "/admin/student/create";
 export const STUDENT_UPDATE = "/admin/student/update";
 
+export const CATEGORY_LIST = "/admin/category/list";
+export const CATEGORY_CREATE = "/admin/category/create";
+export const CATEGORY_UPDATE = "/admin/category/update";
+
 export const LOGIN = "/login";
 export const REGISTER = "/register";
 
