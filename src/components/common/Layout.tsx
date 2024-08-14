@@ -22,6 +22,7 @@ import Face3Icon from "@mui/icons-material/Face3";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import ClassIcon from "@mui/icons-material/Class";
 import { Colors } from "@/const/colors";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
@@ -51,6 +52,11 @@ const DRAWER_LIST = [
     title: "Book",
     icon: <AutoStoriesIcon sx={{ color: Colors.white }} />,
     routeName: "/admin/book/list",
+  },
+  {
+    title: "Category",
+    icon: <ClassIcon sx={{ color: Colors.white }} />,
+    routeName: "/admin/category/list",
   },
   {
     title: "Logout",
@@ -241,9 +247,20 @@ const Page: React.FC<AppProps> = ({ children }) => {
             </ListItem>
           ))}
         </List>
-        {open &&<div style={{display: 'flex', flex: 1, backgroundColor: Colors.primary_color, padding: 12}}>
-          <p style={{color: Colors.white, fontSize: 12}}>Developed by Khine Zaw Htet</p>
-        </div>}
+        {open && (
+          <div
+            style={{
+              display: "flex",
+              flex: 1,
+              backgroundColor: Colors.primary_color,
+              padding: 12,
+            }}
+          >
+            <p style={{ color: Colors.white, fontSize: 12 }}>
+              Developed by Khine Zaw Htet
+            </p>
+          </div>
+        )}
       </Drawer>
       <Box
         component="main"

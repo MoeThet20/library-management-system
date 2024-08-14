@@ -87,7 +87,7 @@ export default function EnhancedTable() {
           mb={3}
         >
           <Typography component="h1" variant="h5">
-            Book List
+            Categories
           </Typography>
           <Button
             variant="contained"

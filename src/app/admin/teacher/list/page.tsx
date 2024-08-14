@@ -121,8 +121,7 @@ export default function TeacherList() {
     router.push(TEACHER_CREATE);
   };
 
-  const handleDelete = () => {
-  };
+  const handleDelete = () => {};
 
   return (
     <Layout>
@@ -146,58 +145,55 @@ export default function TeacherList() {
           </Button>
         </Box>
         <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Id</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell align="right">Phone No.</TableCell>
-              <TableCell align="right">RFID</TableCell>
-              <TableCell align="right">Occupation</TableCell>
-              <TableCell align="right">Created Date</TableCell>
-              <TableCell></TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell component="th" scope="row">
-                  {row.id}
-                </TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell align="right">{row.phone_no}</TableCell>
-                <TableCell align="right">{row.rfid}</TableCell>
-                <TableCell align="right">{row.occupation}</TableCell>
-                <TableCell align="right">{row.created_date}</TableCell>
-                <TableCell align="right">
-                  <IconButton
-                    sx={{ color: Colors.primary_color }}
-                    aria-label="edit"
-                    onClick={() => handleEditClick()}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </TableCell>
-                <TableCell align="right">
-                <IconButton
-            sx={{ color: Colors.primary_color }}
-            aria-label="delete"
-            onClick={() => handleDelete()}
-          >
-            <DeleteIcon />
-          </IconButton>
-                </TableCell>
-
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Id</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell align="right">Phone No.</TableCell>
+                <TableCell align="right">RFID</TableCell>
+                <TableCell align="right">Occupation</TableCell>
+                <TableCell align="right">Created Date</TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {rows.map((row, index) => (
+                <TableRow key={row.id}>
+                  <TableCell component="th" scope="row">
+                    {index + 1}
+                  </TableCell>
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{row.email}</TableCell>
+                  <TableCell align="right">{row.phone_no}</TableCell>
+                  <TableCell align="right">{row.rfid}</TableCell>
+                  <TableCell align="right">{row.occupation}</TableCell>
+                  <TableCell align="right">{row.created_date}</TableCell>
+                  <TableCell align="right">
+                    <IconButton
+                      sx={{ color: Colors.primary_color }}
+                      aria-label="edit"
+                      onClick={() => handleEditClick()}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      sx={{ color: Colors.primary_color }}
+                      aria-label="delete"
+                      onClick={() => handleDelete()}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Container>
-        {/* <DataGrid
+      {/* <DataGrid
           rows={rows}
           columns={columns}
           initialState={{
@@ -207,7 +203,7 @@ export default function TeacherList() {
           }}
           pageSizeOptions={[5, 10]}
         /> */}
-        {/* <TableContainer sx={{ maxHeight: 440 }}>
+      {/* <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
