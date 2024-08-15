@@ -28,7 +28,7 @@ export const getCategoryWithQuery = async (
   search: string = ""
 ) => {
   const res = await lmsClient.get(
-    `${CATEGORY}?page=${page}&pageSize=${pageSize}&search={${search}}`
+    `${CATEGORY}?page=${page}&pageSize=${pageSize}&search=${search}`
   );
   return res?.data;
 };

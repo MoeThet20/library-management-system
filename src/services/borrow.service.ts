@@ -16,7 +16,7 @@ export const getBorrowBookWithQuery = async (
   search: string = ""
 ) => {
   const res = await lmsClient.get(
-    `${BORROW}?page=${page}&pageSize=${pageSize}&search={${search}}`
+    `${BORROW}?page=${page}&pageSize=${pageSize}&search=${search}`
   );
   return res?.data;
 };

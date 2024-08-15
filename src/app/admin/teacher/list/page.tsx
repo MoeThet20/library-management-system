@@ -1,5 +1,5 @@
 "use client";
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   CssBaseline,
@@ -16,103 +16,58 @@ import {
   TablePagination,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Colors } from "@/const/colors";
 import { Layout } from "@/components/common";
 import { useRouter } from "next/navigation";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TEACHER_CREATE, TEACHER_UPDATE } from "@/const/routes";
+import { getTeacherWithQuery } from "@/services/teacher.service";
+import { convertDateString, DAY_MONTH_YEAR_HOUR_MINUTE } from "@/const";
+
+type DataType = {
+  total: number;
+  page: number;
+  pageSize: number;
+  list: Array<{
+    id: string;
+    email: string;
+    name: string;
+    occupation: string;
+    rfid: string;
+    createdDate: string;
+    phoneNumber: string;
+  }>;
+};
 
 export default function TeacherList() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [selectionModel, setSelectionModel] = React.useState([]);
-  // const [rowws, setRowws] = React.useState(rows);
-
   const router = useRouter();
-  const rows = [
-    {
-      id: 1,
-      name: "Snow",
-      email: "snow@gmail.com",
-      phone_no: "09794412389",
-      rfid: "123456789",
-      occupation: "Professor",
-      created_date: "11/8/2024",
-    },
-    {
-      id: 2,
-      name: "Lannister",
-      email: "lannister@gmail.com",
-      phone_no: "09984888904",
-      rfid: "123456789",
-      occupation: "Lecturer",
-      created_date: "11/8/2024",
-    },
-    {
-      id: 3,
-      name: "Ferrara",
-      email: "ferrara@gmail.com",
-      phone_no: "09790112229",
-      rfid: "123456789",
-      occupation: "Lecturer",
-      created_date: "11/8/2024",
-    },
-    {
-      id: 4,
-      name: "Stark",
-      email: "stark@gmail.com",
-      phone_no: "09978695643",
-      rfid: "123456789",
-      occupation: "Lecturer",
-      created_date: "11/8/2024",
-    },
-    {
-      id: 5,
-      name: "Targaryen",
-      email: "targaryen@gmail.com",
-      phone_no: "09794412389",
-      rfid: "123456789",
-      occupation: "Lecturer",
-      created_date: "11/8/2024",
-    },
-    {
-      id: 6,
-      name: "Melisandre",
-      email: "melisandre@gmail.com",
-      phone_no: "09794412389",
-      rfid: "123456789",
-      occupation: "Lecturer",
-      created_date: "11/8/2024",
-    },
-    {
-      id: 7,
-      name: "Clifford",
-      email: "clifford@gmail.com",
-      phone_no: "09794412389",
-      rfid: "123456789",
-      occupation: "Lecturer",
-      created_date: "11/8/2024",
-    },
-    {
-      id: 8,
-      name: "Frances",
-      email: "frances@gmail.com",
-      phone_no: "09794412389",
-      rfid: "123456789",
-      occupation: "Lecturer",
-      created_date: "11/8/2024",
-    },
-    {
-      id: 9,
-      name: "Roxie",
-      email: "roxie@gmail.com",
-      phone_no: "09794412389",
-      rfid: "123456789",
-      occupation: "Lecturer",
-      created_date: "11/8/2024",
-    },
-  ];
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [selectionModel, setSelectionModel] = useState([]);
+  const [data, setData] = useState<DataType | null>(null);
+
+  useEffect(() => {
+    setData(null);
+    getTeacherData();
+  }, [page, rowsPerPage]);
+
+  const getTeacherData = async () => {
+    const res = await getTeacherWithQuery(page + 1, rowsPerPage);
+    setData(res);
+  };
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  console.log(data);
 
   const handleEditClick = () => {
     router.push(TEACHER_UPDATE);
@@ -123,18 +78,6 @@ export default function TeacherList() {
   };
 
   const handleDelete = () => {};
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    console.log("new page....", newPage);
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
 
   return (
     <Layout>
@@ -169,106 +112,60 @@ export default function TeacherList() {
                 <TableCell align="right">Occupation</TableCell>
                 <TableCell align="right">Created Date</TableCell>
                 <TableCell></TableCell>
-                <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {(rowsPerPage > 0
-                ? rows.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-                : rows
-              ).map((row, index) => (
-                <TableRow key={row.id}>
-                  <TableCell component="th" scope="row">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.email}</TableCell>
-                  <TableCell align="right">{row.phone_no}</TableCell>
-                  <TableCell align="right">{row.rfid}</TableCell>
-                  <TableCell align="right">{row.occupation}</TableCell>
-                  <TableCell align="right">{row.created_date}</TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      sx={{ color: Colors.primary_color }}
-                      aria-label="edit"
-                      onClick={() => handleEditClick()}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      sx={{ color: Colors.primary_color }}
-                      aria-label="delete"
-                      onClick={() => handleDelete()}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {data?.list.length === 0 ? (
+                <>No Data</>
+              ) : (
+                data?.list.map((data, index) => (
+                  <TableRow key={data.id}>
+                    <TableCell component="th" scope="row">
+                      {index + 1}
+                    </TableCell>
+                    <TableCell>{data.name}</TableCell>
+                    <TableCell>{data.email}</TableCell>
+                    <TableCell align="right">{data.phoneNumber}</TableCell>
+                    <TableCell align="right">{data.rfid}</TableCell>
+                    <TableCell align="right">{data.occupation}</TableCell>
+                    <TableCell align="right">
+                      {convertDateString(
+                        data.createdDate,
+                        DAY_MONTH_YEAR_HOUR_MINUTE
+                      )}
+                    </TableCell>
+                    <TableCell align="right">
+                      <IconButton
+                        sx={{ color: Colors.primary_color }}
+                        aria-label="edit"
+                        onClick={() => handleEditClick()}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        sx={{ color: Colors.primary_color }}
+                        aria-label="delete"
+                        onClick={() => handleDelete()}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[5, 10]}
           component="div"
-          count={rows.length}
+          count={data?.total || 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Container>
-      {/* <DataGrid
-          rows={rows}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 5 },
-            },
-          }}
-          pageSizeOptions={[5, 10]}
-        /> */}
-      {/* <TableContainer sx={{ maxHeight: 440 }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth, fontWeight: "bold" }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                      {columns.map((column) => {
-                        const value = row[column.id];
-                        return (
-                          <TableCell key={column.id} align={column.align}>
-                            {column.format && typeof value === "number"
-                              ? column.format(value)
-                              : value}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Container> */}
     </Layout>
   );
 }

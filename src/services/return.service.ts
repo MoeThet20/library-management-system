@@ -16,7 +16,7 @@ export const getReturnBookWithQuery = async (
   search: string = ""
 ) => {
   const res = await lmsClient.get(
-    `${RETURN}?page=${page}&pageSize=${pageSize}&search={${search}}`
+    `${RETURN}?page=${page}&pageSize=${pageSize}&search=${search}`
   );
   return res?.data;
 };

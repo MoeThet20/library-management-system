@@ -35,7 +35,7 @@ export const getTeacherWithQuery = async (
   search: string = ""
 ) => {
   const res = await lmsClient.get(
-    `${TEACHER}?page=${page}&pageSize=${pageSize}&search={${search}}`
+    `${TEACHER}?page=${page}&pageSize=${pageSize}&search=${search}`
   );
   return res?.data;
 };

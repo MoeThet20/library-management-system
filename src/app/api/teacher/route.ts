@@ -69,11 +69,24 @@ export async function GET(request: NextRequest) {
     take: size,
   });
 
+  const changedNameTeachers =
+    teachers.length > 0
+      ? teachers.map((teacher) => ({
+          id: teacher.id,
+          email: teacher.email,
+          name: teacher.name,
+          occupation: teacher.occupation,
+          rfid: teacher.rfid,
+          createdDate: teacher.created_date,
+          phoneNumber: teacher.phone_number,
+        }))
+      : [];
+
   const teachersRes = {
     total: totalTeachers,
     page: pageNumber,
     pageSize: size,
-    list: teachers,
+    list: changedNameTeachers,
   };
 
   return NextResponse.json(teachersRes, SUCCESS);
