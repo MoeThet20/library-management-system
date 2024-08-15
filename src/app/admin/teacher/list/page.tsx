@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Button,
   CssBaseline,
@@ -23,6 +23,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { TEACHER_CREATE, TEACHER_UPDATE } from "@/const/routes";
 import { getTeacherWithQuery } from "@/services/teacher.service";
 import { convertDateString, DAY_MONTH_YEAR_HOUR_MINUTE } from "@/const";
+import { debounce, ONE_SECOND } from "@/utils/helper";
 
 type DataType = {
   total: number;
@@ -40,13 +41,11 @@ type DataType = {
 };
 
 export default function TeacherList() {
-
   const router = useRouter();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [selectionModel, setSelectionModel] = useState([]);
   const [data, setData] = useState<DataType | null>(null);
-  const [searchValue, setSearchValue] = React.useState('')
+  const [searchValue, setSearchValue] = React.useState("");
 
   useEffect(() => {
     setData(null);
@@ -54,7 +53,7 @@ export default function TeacherList() {
   }, [page, rowsPerPage]);
 
   const getTeacherData = async () => {
-    const res = await getTeacherWithQuery(page + 1, rowsPerPage);
+    const res = await getTeacherWithQuery(page + 1, rowsPerPage, searchValue);
     setData(res);
   };
 
@@ -69,17 +68,33 @@ export default function TeacherList() {
     setPage(0);
   };
 
-  console.log(data);
-
   const handleEditClick = () => {
     router.push(TEACHER_UPDATE);
   };
 
-  const handleCreateTeacher = () => {
+  const goToCreateTeacher = () => {
     router.push(TEACHER_CREATE);
   };
 
   const handleDelete = () => {};
+
+  const fetchResults = useCallback(
+    debounce(async (query: any) => {
+      try {
+        setData(null);
+        const res = await getTeacherWithQuery(page + 1, rowsPerPage, query);
+        setData(res);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }, ONE_SECOND),
+    []
+  );
+
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value);
+    fetchResults(value);
+  };
 
   return (
     <Layout>
@@ -95,11 +110,14 @@ export default function TeacherList() {
             Teacher List
           </Typography>
           <Box display="flex">
-            <SearchInput value={searchValue} onChange={(event)=>setSearchValue(event.target.value)}  />
+            <SearchInput
+              value={searchValue}
+              onChange={(event) => handleSearchChange(event.target.value)}
+            />
             <Button
               variant="contained"
               sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
-              onClick={handleCreateTeacher}
+              onClick={goToCreateTeacher}
               size="small"
             >
               Create

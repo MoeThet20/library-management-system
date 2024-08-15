@@ -2,6 +2,8 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 
+export const ONE_SECOND = 1000;
+
 export function asyncErrorWrapper(
   fn: Function,
   errorHandlerFunc: Function = errorHandler
@@ -30,3 +32,16 @@ export const copyToClipboard = (text: string) => {
 
 export const setDateOnly = (originalDate: Date) =>
   dayjs(originalDate).startOf("day").format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
+
+export const debounce = (target: Function, ms: number) => {
+  let timer: ReturnType<typeof setTimeout>;
+
+  return new Proxy(target, {
+    apply(target, thisArg, args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        Reflect.apply(target, thisArg, args);
+      }, ms);
+    },
+  });
+};
