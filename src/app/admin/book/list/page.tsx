@@ -14,7 +14,7 @@ import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Colors } from "@/const/colors";
 import { Button, Container, CssBaseline } from "@mui/material";
-import { Layout } from "@/components/common";
+import { Layout, SearchInput } from "@/components/common";
 import { useRouter } from "next/navigation";
 import EditIcon from "@mui/icons-material/Edit";
 import { BOOK_CREATE, BOOK_UPDATE } from "@/const/routes";
@@ -49,6 +49,7 @@ const rows = [
 export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [searchValue, setSearchValue] = React.useState('')
   const router = useRouter();
 
   const handleCreateBook = () => {
@@ -82,13 +83,16 @@ export default function EnhancedTable() {
           <Typography component="h1" variant="h5">
             Book List
           </Typography>
+          <Box display="flex">
+            <SearchInput value={searchValue} onChange={event=>setSearchValue(event.target.value)}  />
           <Button
             variant="contained"
-            sx={{ backgroundColor: Colors.primary_color }}
+            sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
             onClick={handleCreateBook}
           >
             Create
           </Button>
+          </Box>
         </Box>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">

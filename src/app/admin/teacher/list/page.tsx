@@ -18,7 +18,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Colors } from "@/const/colors";
-import { Layout } from "@/components/common";
+import { Layout, SearchInput } from "@/components/common";
 import { useRouter } from "next/navigation";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TEACHER_CREATE, TEACHER_UPDATE } from "@/const/routes";
@@ -26,9 +26,7 @@ import { TEACHER_CREATE, TEACHER_UPDATE } from "@/const/routes";
 export default function TeacherList() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [selectionModel, setSelectionModel] = React.useState([]);
-  // const [rowws, setRowws] = React.useState(rows);
-
+  const [searchValue, setSearchValue] = React.useState('')
   const router = useRouter();
   const rows = [
     {
@@ -149,13 +147,17 @@ export default function TeacherList() {
           <Typography component="h1" variant="h5">
             Teacher List
           </Typography>
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: Colors.primary_color }}
-            onClick={handleCreateTeacher}
-          >
-            Create
-          </Button>
+          <Box display="flex">
+            <SearchInput value={searchValue} onChange={(event)=>setSearchValue(event.target.value)}  />
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
+              onClick={handleCreateTeacher}
+              size="small"
+            >
+              Create
+            </Button>
+          </Box>
         </Box>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
