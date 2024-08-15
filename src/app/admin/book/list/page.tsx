@@ -9,34 +9,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import { visuallyHidden } from "@mui/utils";
 import { Colors } from "@/const/colors";
 import { Button, Container, CssBaseline } from "@mui/material";
 import { Layout } from "@/components/common";
 import { useRouter } from "next/navigation";
 import EditIcon from "@mui/icons-material/Edit";
 import { BOOK_CREATE, BOOK_UPDATE } from "@/const/routes";
-
-interface Data {
-  id: number;
-  title: string;
-  author: string;
-  isbn: string;
-  category: string;
-  publication_date: string;
-  amount: string;
-  place: string;
-  created_by: string;
-}
 
 const rows = [
   {
@@ -66,6 +47,8 @@ const rows = [
 ];
 
 export default function EnhancedTable() {
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const router = useRouter();
 
   const handleCreateBook = () => {
@@ -74,6 +57,16 @@ export default function EnhancedTable() {
   const handleDelete = () => {};
   const handleEditClick = () => {
     router.push(BOOK_UPDATE);
+  };
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
   };
 
   return (
@@ -113,7 +106,13 @@ export default function EnhancedTable() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row, index) => (
+              {(rowsPerPage > 0
+                ? rows.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : rows
+              ).map((row, index) => (
                 <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
                     {index + 1}
@@ -145,6 +144,15 @@ export default function EnhancedTable() {
             </TableBody>
           </Table>
         </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Container>
     </Layout>
   );

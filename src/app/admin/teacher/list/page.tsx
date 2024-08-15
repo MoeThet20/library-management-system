@@ -13,6 +13,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  TablePagination,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -24,7 +25,7 @@ import { TEACHER_CREATE, TEACHER_UPDATE } from "@/const/routes";
 
 export default function TeacherList() {
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectionModel, setSelectionModel] = React.useState([]);
   // const [rowws, setRowws] = React.useState(rows);
 
@@ -123,6 +124,18 @@ export default function TeacherList() {
 
   const handleDelete = () => {};
 
+  const handleChangePage = (event: unknown, newPage: number) => {
+    console.log("new page....", newPage);
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <Layout>
       <Container component="main" maxWidth="lg">
@@ -160,7 +173,13 @@ export default function TeacherList() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row, index) => (
+              {(rowsPerPage > 0
+                ? rows.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : rows
+              ).map((row, index) => (
                 <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
                     {index + 1}
@@ -192,6 +211,15 @@ export default function TeacherList() {
             </TableBody>
           </Table>
         </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Container>
       {/* <DataGrid
           rows={rows}

@@ -13,6 +13,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  TablePagination
 } from "@mui/material";
 import { Layout } from "@/components/common";
 import { Colors } from "@/const/colors";
@@ -21,7 +22,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { STUDENT_CREATE, STUDENT_UPDATE } from "@/const/routes";
 
-const data = [
+const rows = [
   {
     id: 1,
     name: "Khine Zaw Htet",
@@ -52,6 +53,8 @@ const data = [
 ];
 
 export default function StudentList() {
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const router = useRouter();
 
   const handleCreateStudent = () => {
@@ -61,6 +64,16 @@ export default function StudentList() {
 
   const handleEditClick = () => {
     router.push(STUDENT_UPDATE);
+  };
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
   };
   return (
     <Layout>
@@ -99,7 +112,13 @@ export default function StudentList() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((row, index) => (
+              {(rowsPerPage > 0
+                ? rows.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : rows
+              ).map((row, index) => (
                 <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
                     {index + 1}
@@ -131,6 +150,15 @@ export default function StudentList() {
             </TableBody>
           </Table>
         </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Container>
     </Layout>
   );
