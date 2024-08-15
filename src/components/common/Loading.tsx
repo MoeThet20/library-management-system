@@ -5,7 +5,7 @@ type LoadingProps = {
   size?: number;
 };
 
-export default function CircularIndeterminate(props: LoadingProps) {
+export default function Loading(props: LoadingProps) {
   const { size = 40 } = props;
   return (
     <Box
@@ -13,7 +13,6 @@ export default function CircularIndeterminate(props: LoadingProps) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
       }}
     >
       <CircularProgress size={size} />

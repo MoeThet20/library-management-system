@@ -13,7 +13,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  TablePagination
+  TablePagination,
 } from "@mui/material";
 import { Layout, SearchInput } from "@/components/common";
 import { Colors } from "@/const/colors";
@@ -43,7 +43,7 @@ const rows = [
   },
   {
     id: 3,
-    name: "Moe Thet",
+    name: "Aung Aung",
     role_no: "6EC-3",
     current_year: "Final Year",
     created_date: "1/8/2024",
@@ -55,7 +55,7 @@ const rows = [
 export default function StudentList() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [searchValue, setSearchValue] = React.useState('')
+  const [searchValue, setSearchValue] = React.useState("");
   const router = useRouter();
 
   const handleCreateStudent = () => {
@@ -90,14 +90,17 @@ export default function StudentList() {
             Student List
           </Typography>
           <Box display="flex">
-            <SearchInput value={searchValue} onChange={event=>setSearchValue(event.target.value)}  />
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
-            onClick={handleCreateStudent}
-          >
-            Create
-          </Button>
+            <SearchInput
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
+            />
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
+              onClick={handleCreateStudent}
+            >
+              Create
+            </Button>
           </Box>
         </Box>
         <TableContainer sx={{ maxHeight: 440 }}>

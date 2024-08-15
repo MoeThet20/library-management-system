@@ -10,6 +10,7 @@ import { teacherRegister } from "@/services/teacher.service";
 import { useRouter } from "next/navigation";
 import { Colors } from "@/const/colors";
 import { TEACHER_REGISTER_INITIAL_VALUES } from "@/initialValues/teacher";
+import validation from "@/validation/teacher.service";
 import { TEACHER_LIST } from "@/const/routes";
 
 export default function TeacherCreate() {
@@ -38,6 +39,7 @@ export default function TeacherCreate() {
           </Typography>
           <Formik
             initialValues={TEACHER_REGISTER_INITIAL_VALUES}
+            validationSchema={validation.teacherCreateValidationSchema}
             onSubmit={handleSubmit}
           >
             {({ isSubmitting }) => (
@@ -54,7 +56,7 @@ export default function TeacherCreate() {
                 <TextInput name="password" label="Password" type="password" />
                 <TextInput
                   name="confirmPassword"
-                  label="Password"
+                  label="Confirm Password"
                   type="password"
                 />
                 <Button

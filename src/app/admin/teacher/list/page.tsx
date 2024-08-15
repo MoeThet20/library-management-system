@@ -17,11 +17,11 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { Colors } from "@/const/colors";
-import { Layout, SearchInput } from "@/components/common";
+import { Layout, Loading, SearchInput } from "@/components/common";
 import { useRouter } from "next/navigation";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TEACHER_CREATE, TEACHER_UPDATE } from "@/const/routes";
-import { getTeacherWithQuery } from "@/services/teacher.service";
+import { getTeacherWithQuery, teacherDelete } from "@/services/teacher.service";
 import { convertDateString, DAY_MONTH_YEAR_HOUR_MINUTE } from "@/const";
 import { debounce, ONE_SECOND } from "@/utils/helper";
 
@@ -76,7 +76,7 @@ export default function TeacherList() {
     router.push(TEACHER_CREATE);
   };
 
-  const handleDelete = () => {};
+  const handleDelete = async (id: string) => await teacherDelete(id);
 
   const fetchResults = useCallback(
     debounce(async (query: any) => {
@@ -139,8 +139,14 @@ export default function TeacherList() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data?.list.length === 0 ? (
-                <>No Data</>
+              {!data ? (
+                <TableCell colSpan={8} align="center">
+                  <Loading />
+                </TableCell>
+              ) : data?.list.length === 0 ? (
+                <TableCell colSpan={8} align="center">
+                  There is no teacher.
+                </TableCell>
               ) : (
                 data?.list.map((data, index) => (
                   <TableRow key={data.id}>
@@ -169,7 +175,7 @@ export default function TeacherList() {
                       <IconButton
                         sx={{ color: Colors.primary_color }}
                         aria-label="delete"
-                        onClick={() => handleDelete()}
+                        onClick={() => handleDelete(data.id)}
                       >
                         <DeleteIcon />
                       </IconButton>
