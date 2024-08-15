@@ -15,7 +15,7 @@ import {
   TableBody,
   TablePagination
 } from "@mui/material";
-import { Layout } from "@/components/common";
+import { Layout, SearchInput } from "@/components/common";
 import { Colors } from "@/const/colors";
 import { useRouter } from "next/navigation";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -55,6 +55,7 @@ const rows = [
 export default function StudentList() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [searchValue, setSearchValue] = React.useState('')
   const router = useRouter();
 
   const handleCreateStudent = () => {
@@ -88,13 +89,16 @@ export default function StudentList() {
           <Typography component="h1" variant="h5">
             Student List
           </Typography>
+          <Box display="flex">
+            <SearchInput value={searchValue} onChange={event=>setSearchValue(event.target.value)}  />
           <Button
             variant="contained"
-            sx={{ backgroundColor: Colors.primary_color }}
+            sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
             onClick={handleCreateStudent}
           >
             Create
           </Button>
+          </Box>
         </Box>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">

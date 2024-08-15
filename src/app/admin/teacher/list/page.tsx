@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { Colors } from "@/const/colors";
-import { Layout } from "@/components/common";
+import { Layout, SearchInput } from "@/components/common";
 import { useRouter } from "next/navigation";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TEACHER_CREATE, TEACHER_UPDATE } from "@/const/routes";
@@ -40,11 +40,13 @@ type DataType = {
 };
 
 export default function TeacherList() {
+
   const router = useRouter();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectionModel, setSelectionModel] = useState([]);
   const [data, setData] = useState<DataType | null>(null);
+  const [searchValue, setSearchValue] = React.useState('')
 
   useEffect(() => {
     setData(null);
@@ -92,13 +94,17 @@ export default function TeacherList() {
           <Typography component="h1" variant="h5">
             Teacher List
           </Typography>
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: Colors.primary_color }}
-            onClick={handleCreateTeacher}
-          >
-            Create
-          </Button>
+          <Box display="flex">
+            <SearchInput value={searchValue} onChange={(event)=>setSearchValue(event.target.value)}  />
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
+              onClick={handleCreateTeacher}
+              size="small"
+            >
+              Create
+            </Button>
+          </Box>
         </Box>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
