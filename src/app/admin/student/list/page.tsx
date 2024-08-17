@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { STUDENT_CREATE, STUDENT_UPDATE } from "@/const/routes";
-import { debounce, ONE_SECOND } from "@/utils/helper";
+import { debounce, ONE_SECOND, yearRoleNumberConverter } from "@/utils/helper";
 import { getStudentWithQuery, studentDelete } from "@/services/student.service";
 import {
   CONFIRM_MESSAGE,
@@ -169,7 +169,6 @@ export default function StudentList() {
                 <TableCell>No</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Role Number</TableCell>
-                <TableCell align="right">Current Year</TableCell>
                 <TableCell align="right">Phone Number</TableCell>
                 <TableCell align="right">Created By</TableCell>
                 <TableCell align="right">Created Date</TableCell>
@@ -196,8 +195,12 @@ export default function StudentList() {
                       {index + 1}
                     </TableCell>
                     <TableCell>{data.name}</TableCell>
-                    <TableCell>{data.roleNumber}</TableCell>
-                    <TableCell align="right">{data.currentYear}</TableCell>
+                    <TableCell>
+                      {yearRoleNumberConverter(
+                        data.currentYear,
+                        Number(data.roleNumber)
+                      )}
+                    </TableCell>
                     <TableCell align="right">{data.phoneNumber}</TableCell>
                     <TableCell align="right">{data.createdBy}</TableCell>
                     <TableCell align="right">

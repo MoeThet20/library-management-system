@@ -49,6 +49,22 @@ export const debounce = (target: Function, ms: number) => {
   });
 };
 
-function Capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-}
+export const yearRoleNumberConverter = (
+  year: string,
+  roleNumber: number
+): string => {
+  switch (year) {
+    case "First":
+      return `I-EC-${roleNumber}`;
+    case "Second":
+      return `II-EC-${roleNumber}`;
+    case "Third":
+      return `III-EC-${roleNumber}`;
+    case "Fourth":
+      return `IV-EC-${roleNumber}`;
+    case "Fifth":
+      return `V-EC-${roleNumber}`;
+    default:
+      return `VI-EC-${roleNumber}`;
+  }
+};
