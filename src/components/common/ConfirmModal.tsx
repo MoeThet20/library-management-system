@@ -1,53 +1,43 @@
 import * as React from "react";
-import {
-  Slide,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Button,
-  Typography,
-} from "@mui/material";
-import { TransitionProps } from "@mui/material/transitions";
-import { useAppSelector, useAppDispatch } from "@/hook/ReduxHooks";
-import { disableMessageModal } from "@/redux/features/messageModalSlice";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement<any, any>;
-  },
-  ref: React.Ref<unknown>
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+type PropsType = {
+  isOpen: boolean;
+  title?: string;
+  message?: string;
+  handleNo?: () => void;
+  handleYes?: () => void;
+};
 
-export default function AlertDialogSlide() {
-  const dispatch = useAppDispatch();
-  const { message, isOpenModal } = useAppSelector(
-    (state) => state.messageModal
-  );
-
-  const handleClose = () => dispatch(disableMessageModal());
+export default function ResponsiveDialog(props: PropsType) {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
     <Dialog
-      open={isOpenModal}
-      TransitionComponent={Transition}
-      keepMounted
-      onClose={handleClose}
-      fullWidth
-      maxWidth={"sm"}
-      aria-describedby="alert-dialog-slide-description"
+      fullScreen={fullScreen}
+      open={props.isOpen}
+      onClose={props.handleNo}
+      aria-labelledby="responsive-dialog-title"
     >
-      <DialogTitle></DialogTitle>
+      <DialogTitle id="responsive-dialog-title">{props.title}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-slide-description">
-          {message && <div>{message}</div>}
-        </DialogContentText>
+        <DialogContentText>{props.message}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>OK</Button>
+        <Button autoFocus onClick={props.handleNo}>
+          No
+        </Button>
+        <Button onClick={props.handleYes} autoFocus>
+          Yes
+        </Button>
       </DialogActions>
     </Dialog>
   );

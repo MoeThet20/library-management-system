@@ -21,7 +21,7 @@ export const teacherRegister = async (data: TEACHER_REGISTER_TYPE) => {
 export const teacherUpdate = async (data: TEACHER_UPDATE_TYPE) => {
   const res = await lmsClient.patch(`${TEACHER}/${data.id}`, {
     name: data.name,
-    rfid: data,
+    rfid: data.rfid,
     phoneNumber: data.phoneNumber,
     occupation: data.occupation,
   });

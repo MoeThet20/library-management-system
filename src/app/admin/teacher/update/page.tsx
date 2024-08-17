@@ -14,9 +14,11 @@ import {
   TEACHER_UPDATE_INITIAL_VALUES,
   TEACHER_UPDATE_TYPE,
 } from "@/initialValues/teacher";
+import { useAppSelector } from "@/hook/ReduxHooks";
 
 export default function TeacherUpdate() {
   const router = useRouter();
+  const { selectedTeacher } = useAppSelector((state) => state.teacher);
 
   const handleSubmit = async (values: TEACHER_UPDATE_TYPE) => {
     const res = await teacherUpdate(values);
@@ -41,10 +43,12 @@ export default function TeacherUpdate() {
             Teacher Update
           </Typography>
           <Formik
-            initialValues={TEACHER_UPDATE_INITIAL_VALUES}
+            initialValues={
+              selectedTeacher ? selectedTeacher : TEACHER_UPDATE_INITIAL_VALUES
+            }
             onSubmit={handleSubmit}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, dirty }) => (
               <Form>
                 <TextInput name="name" label="Name" />
                 <TextInput name="email" label="Email" />
@@ -57,7 +61,7 @@ export default function TeacherUpdate() {
                 />
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !dirty}
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, mb: 2, backgroundColor: Colors.primary_color }}

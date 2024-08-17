@@ -49,6 +49,11 @@ export async function GET(request: NextRequest) {
 
   const totalTeachers = await prisma.teacher.count({
     where: {
+      NOT: {
+        email: {
+          endsWith: "admin@gmail.com",
+        },
+      },
       OR: [
         { name: { contains: searchTerm, mode: "insensitive" } },
         { rfid: { contains: searchTerm, mode: "insensitive" } },
@@ -59,6 +64,11 @@ export async function GET(request: NextRequest) {
 
   const teachers = await prisma.teacher.findMany({
     where: {
+      NOT: {
+        email: {
+          endsWith: "admin@gmail.com",
+        },
+      },
       OR: [
         { name: { contains: searchTerm, mode: "insensitive" } },
         { rfid: { contains: searchTerm, mode: "insensitive" } },

@@ -17,35 +17,56 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { Colors } from "@/const/colors";
-import { Layout, Loading, SearchInput } from "@/components/common";
+import {
+  ConfirmModal,
+  Layout,
+  Loading,
+  SearchInput,
+} from "@/components/common";
 import { useRouter } from "next/navigation";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { TEACHER_CREATE, TEACHER_UPDATE } from "@/const/routes";
 import { getTeacherWithQuery, teacherDelete } from "@/services/teacher.service";
-import { convertDateString, DAY_MONTH_YEAR_HOUR_MINUTE } from "@/const";
+import {
+  CONFIRM_MESSAGE,
+  convertDateString,
+  DAY_MONTH_YEAR_HOUR_MINUTE,
+} from "@/const";
 import { debounce, ONE_SECOND } from "@/utils/helper";
+import { useAppDispatch } from "@/hook/ReduxHooks";
+import { updatedSelectedTeacher } from "@/redux/features/teacherSlice";
+
+type ListType = {
+  id: string;
+  email: string;
+  name: string;
+  occupation: string;
+  rfid: string;
+  createdDate: string;
+  phoneNumber: string;
+};
 
 type DataType = {
   total: number;
   page: number;
   pageSize: number;
-  list: Array<{
-    id: string;
-    email: string;
-    name: string;
-    occupation: string;
-    rfid: string;
-    createdDate: string;
-    phoneNumber: string;
-  }>;
+  list: Array<ListType>;
 };
+
+const DELETE = "DELETE";
+const EDIT = "EDIT";
+
+type ACTION = "DELETE" | "EDIT";
 
 export default function TeacherList() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [data, setData] = useState<DataType | null>(null);
   const [searchValue, setSearchValue] = React.useState("");
+  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
+  const [selectedTeacher, setSelectedTeacher] = useState<ListType | null>(null);
 
   useEffect(() => {
     setData(null);
@@ -68,15 +89,32 @@ export default function TeacherList() {
     setPage(0);
   };
 
-  const handleEditClick = () => {
-    router.push(TEACHER_UPDATE);
-  };
-
   const goToCreateTeacher = () => {
     router.push(TEACHER_CREATE);
   };
 
-  const handleDelete = async (id: string) => await teacherDelete(id);
+  const handleDelete = async () => {
+    selectedTeacher && (await teacherDelete(selectedTeacher?.id));
+    setData((prev: any) => {
+      return {
+        ...prev,
+        list: prev?.list.filter(
+          (teacher: ListType) => teacher.id !== selectedTeacher?.id
+        ),
+      };
+    });
+    toggleConfirmModal();
+  };
+
+  const handleTeacherById = (action: ACTION, data: ListType) => {
+    setSelectedTeacher(data);
+    if (action === DELETE) {
+      toggleConfirmModal();
+      return;
+    }
+    dispatch(updatedSelectedTeacher(data));
+    router.push(TEACHER_UPDATE);
+  };
 
   const fetchResults = useCallback(
     debounce(async (query: any) => {
@@ -95,6 +133,8 @@ export default function TeacherList() {
     setSearchValue(value);
     fetchResults(value);
   };
+
+  const toggleConfirmModal = () => setIsOpenConfirmModal((prev) => !prev);
 
   return (
     <Layout>
@@ -140,13 +180,17 @@ export default function TeacherList() {
             </TableHead>
             <TableBody>
               {!data ? (
-                <TableCell colSpan={8} align="center">
-                  <Loading />
-                </TableCell>
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    <Loading />
+                  </TableCell>
+                </TableRow>
               ) : data?.list.length === 0 ? (
-                <TableCell colSpan={8} align="center">
-                  There is no teacher.
-                </TableCell>
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    There is no teacher.
+                  </TableCell>
+                </TableRow>
               ) : (
                 data?.list.map((data, index) => (
                   <TableRow key={data.id}>
@@ -168,14 +212,14 @@ export default function TeacherList() {
                       <IconButton
                         sx={{ color: Colors.primary_color }}
                         aria-label="edit"
-                        onClick={() => handleEditClick()}
+                        onClick={() => handleTeacherById(EDIT, data)}
                       >
                         <EditIcon />
                       </IconButton>
                       <IconButton
                         sx={{ color: Colors.primary_color }}
                         aria-label="delete"
-                        onClick={() => handleDelete(data.id)}
+                        onClick={() => handleTeacherById(DELETE, data)}
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -196,6 +240,12 @@ export default function TeacherList() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Container>
+      <ConfirmModal
+        isOpen={isOpenConfirmModal}
+        message={CONFIRM_MESSAGE.DELETE}
+        handleNo={toggleConfirmModal}
+        handleYes={handleDelete}
+      />
     </Layout>
   );
 }

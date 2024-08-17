@@ -28,3 +28,7 @@ export const YEARS = [
   { value: "fifth", label: "Fifth Year" },
   { value: "final", label: "Final Year" },
 ];
+
+export const CONFIRM_MESSAGE = {
+  DELETE: "Do you want to delete?",
+};

@@ -2,11 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import { persistReducer } from "redux-persist";
 import { thunk } from "redux-thunk";
-import messageModalSlice from "./features/messageModalSlice";
 import { storage } from "./storage";
+import messageModalSlice from "./features/messageModalSlice";
+import teacherSlice from "./features/teacherSlice";
 
 const reducers = combineReducers({
   messageModal: messageModalSlice,
+  teacher: teacherSlice,
 });
 const persistConfig = {
   key: "root",
