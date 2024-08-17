@@ -6,16 +6,18 @@ import { storage } from "./storage";
 import messageModalSlice from "./features/messageModalSlice";
 import teacherSlice from "./features/teacherSlice";
 import studentSlice from "./features/studentSlice";
+import categorySlice from "./features/categorySlice";
 
 const reducers = combineReducers({
   messageModal: messageModalSlice,
   teacher: teacherSlice,
   student: studentSlice,
+  category: categorySlice,
 });
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["teacher", "student"],
+  whitelist: ["teacher", "student", "category"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

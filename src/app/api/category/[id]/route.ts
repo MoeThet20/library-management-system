@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { NO_CONTENT, SUCCESS } from "@/const/status";
+import { CONFLICT, NO_CONTENT, SUCCESS } from "@/const/status";
 
 type ParamsProps = { params: { id: string } };
 
@@ -18,6 +18,14 @@ export async function PATCH(request: NextRequest, { params }: ParamsProps) {
   const data = await request.json();
 
   const { category } = data;
+
+  const findCategory = await prisma.category.findUnique({
+    where: { category: category.trim() },
+  });
+
+  if (findCategory) {
+    return NextResponse.json({ error: "Category already exist" }, CONFLICT);
+  }
 
   const categories = await prisma.category.update({
     where: { id: params.id },

@@ -1,14 +1,14 @@
 import {
-  CATEGORY_CREATE_TYPE,
+  CATEGORY_CREATE_SERVICE_TYPE,
   CATEGORY_UPDATE_TYPE,
 } from "@/initialValues/category";
 import { lmsClient } from "./api";
 
 const CATEGORY = "category";
 
-export const categoryCreate = async (data: CATEGORY_CREATE_TYPE) => {
+export const categoryCreate = async (data: CATEGORY_CREATE_SERVICE_TYPE) => {
   const res = await lmsClient.post(CATEGORY, {
-    category: data.category,
+    category: data.category.toLocaleLowerCase().trim(),
     teacherId: data.teacherId,
   });
   return res;
@@ -16,7 +16,7 @@ export const categoryCreate = async (data: CATEGORY_CREATE_TYPE) => {
 
 export const categoryUpdate = async (data: CATEGORY_UPDATE_TYPE) => {
   const res = await lmsClient.patch(`${CATEGORY}/${data.id}`, {
-    category: data.category,
+    category: data.category.toLocaleLowerCase().trim(),
   });
 
   return res;

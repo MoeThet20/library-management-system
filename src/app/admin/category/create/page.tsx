@@ -1,24 +1,34 @@
-//  "use client";
-
-// import React from "react";
-
-// function BookSearch() {
-//   return <div>BookSearch</div>;
-// }
-
-// export default BookSearch;
-
 "use client";
+
 import * as React from "react";
 import { Button, CssBaseline, Box, Typography, Container } from "@mui/material";
 import { Formik, Form } from "formik";
 
-import { Select, TextInput, Layout } from "@/components/common";
+import { TextInput, Layout } from "@/components/common";
 import { Colors } from "@/const/colors";
-import { YEARS } from "@/const";
+import {
+  CATEGORY_CREATE_INITIAL_VALUES,
+  CATEGORY_CREATE_TYPE,
+} from "@/initialValues/category";
+import validation from "@/validation/category.service";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { CATEGORY_LIST } from "@/const/routes";
+import { categoryCreate } from "@/services/category.service";
 
 export default function BookCreate() {
-  const handleSubmit = async (values: any) => {};
+  const { data } = useSession();
+  const router = useRouter();
+
+  const handleSubmit = async (values: CATEGORY_CREATE_TYPE) => {
+    if (!data?.user?.id) return;
+
+    const request = { ...values, teacherId: data?.user?.id };
+    const res = await categoryCreate(request);
+    if (!res) return;
+
+    router.push(CATEGORY_LIST);
+  };
 
   return (
     <Layout>
@@ -36,7 +46,8 @@ export default function BookCreate() {
             Category Create
           </Typography>
           <Formik
-            initialValues={{ name: "", password: "" }}
+            initialValues={CATEGORY_CREATE_INITIAL_VALUES}
+            validationSchema={validation.categoryCreateValidationSchema}
             onSubmit={handleSubmit}
           >
             {({ isSubmitting }) => (

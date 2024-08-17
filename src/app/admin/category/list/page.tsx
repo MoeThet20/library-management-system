@@ -1,78 +1,140 @@
 "use client";
-import * as React from "react";
-import { alpha } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import { visuallyHidden } from "@mui/utils";
+
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  Button,
+  CssBaseline,
+  Box,
+  Typography,
+  Container,
+  IconButton,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TablePagination,
+  capitalize,
+} from "@mui/material";
+import {
+  ConfirmModal,
+  Layout,
+  Loading,
+  SearchInput,
+} from "@/components/common";
 import { Colors } from "@/const/colors";
-import { Button, Container, CssBaseline } from "@mui/material";
-import { Layout } from "@/components/common";
 import { useRouter } from "next/navigation";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { CATEGORY_CREATE, CATEGORY_UPDATE } from "@/const/routes";
+import { debounce, ONE_SECOND } from "@/utils/helper";
+import {
+  getCategoryWithQuery,
+  categoryDelete,
+} from "@/services/category.service";
+import {
+  CONFIRM_MESSAGE,
+  convertDateString,
+  DAY_MONTH_YEAR_HOUR_MINUTE,
+} from "@/const";
+import { updatedSelectedCategory } from "@/redux/features/categorySlice";
+import { useAppDispatch } from "@/hook/ReduxHooks";
 
-interface Data {
-  id: number;
-  title: string;
-  author: string;
-  isbn: string;
+type ListType = {
+  id: string;
   category: string;
-  publication_date: string;
-  amount: string;
-  place: string;
-  created_by: string;
-}
+  createdBy: string;
+  createdDate: string;
+};
 
-const rows = [
-  {
-    id: 1,
-    title: "Networking",
-    author: "Khine Zaw Htet",
-    isbn: "ISBN",
-    category: "IT",
-    publication_date: "21/6/2000",
-    amount: "1",
-    place: "First stand",
-    created_by: "Thet Hnin",
-    created_date: "13/8/2024",
-  },
-  {
-    id: 2,
-    title: "Networking",
-    author: "Khine Zaw Htet",
-    isbn: "ISBN",
-    category: "IT",
-    publication_date: "21/6/2000",
-    amount: "1",
-    place: "First stand",
-    created_by: "Thet Hnin",
-    created_date: "13/8/2024",
-  },
-];
+type DataType = {
+  total: number;
+  page: number;
+  pageSize: number;
+  list: Array<ListType>;
+};
 
-export default function EnhancedTable() {
+const DELETE = "DELETE";
+const EDIT = "EDIT";
+
+type ACTION = "DELETE" | "EDIT";
+
+export default function CategoryList() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [searchValue, setSearchValue] = React.useState("");
+  const [data, setData] = useState<DataType | null>(null);
+  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<ListType | null>(
+    null
+  );
 
-  const handleCreateBook = () => {
-    router.push(CATEGORY_CREATE);
+  useEffect(() => {
+    setData(null);
+    getCategoryData();
+  }, [page, rowsPerPage]);
+
+  const getCategoryData = async () => {
+    const res = await getCategoryWithQuery(page + 1, rowsPerPage, searchValue);
+    setData(res);
   };
-  const handleDelete = () => {};
-  const handleEditClick = () => {
+
+  const goToCreateStudent = () => router.push(CATEGORY_CREATE);
+
+  const handleDelete = async () => {
+    setData((prev: any) => {
+      return {
+        ...prev,
+        list: prev?.list.filter(
+          (student: ListType) => student.id !== selectedCategory?.id
+        ),
+      };
+    });
+    toggleConfirmModal();
+    selectedCategory && (await categoryDelete(selectedCategory?.id));
+  };
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const fetchResults = useCallback(
+    debounce(async (query: any) => {
+      try {
+        setData(null);
+        const res = await getCategoryWithQuery(page + 1, rowsPerPage, query);
+        setData(res);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }, ONE_SECOND),
+    []
+  );
+
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value);
+    fetchResults(value);
+  };
+
+  const toggleConfirmModal = () => setIsOpenConfirmModal((prev) => !prev);
+
+  const handleCategoryById = (action: ACTION, data: ListType) => {
+    setSelectedCategory(data);
+    if (action === DELETE) {
+      toggleConfirmModal();
+      return;
+    }
+    dispatch(updatedSelectedCategory(data));
     router.push(CATEGORY_UPDATE);
   };
 
@@ -87,150 +149,98 @@ export default function EnhancedTable() {
           mb={3}
         >
           <Typography component="h1" variant="h5">
-            Categories
+            Category List
           </Typography>
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: Colors.primary_color }}
-            onClick={handleCreateBook}
-          >
-            Create
-          </Button>
+          <Box display="flex">
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
+              onClick={goToCreateStudent}
+            >
+              Create
+            </Button>
+          </Box>
         </Box>
+        <SearchInput
+          value={searchValue}
+          onChange={(event) => handleSearchChange(event.target.value)}
+        />
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
                 <TableCell>No</TableCell>
-                <TableCell align="right">Category</TableCell>
+                <TableCell>Category</TableCell>
                 <TableCell align="right">Created By</TableCell>
                 <TableCell align="right">Created Date</TableCell>
-                <TableCell />
                 <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row, index) => (
-                <TableRow key={row.id}>
-                  <TableCell component="th" scope="row">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell align="right">{row.category}</TableCell>
-                  <TableCell align="right">{row.created_by}</TableCell>
-                  <TableCell align="right">{row.created_date}</TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      sx={{ color: Colors.primary_color }}
-                      aria-label="edit"
-                      onClick={() => handleEditClick()}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      sx={{ color: Colors.primary_color }}
-                      aria-label="delete"
-                      onClick={() => handleDelete()}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+              {!data ? (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    <Loading />
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : data?.list.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    There is no category.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                data?.list.map((data, index) => (
+                  <TableRow key={data.id}>
+                    <TableCell component="th" scope="row">
+                      {index + 1}
+                    </TableCell>
+                    <TableCell>{capitalize(data.category)}</TableCell>
+                    <TableCell align="right">{data.createdBy}</TableCell>
+                    <TableCell align="right">
+                      {convertDateString(
+                        data.createdDate,
+                        DAY_MONTH_YEAR_HOUR_MINUTE
+                      )}
+                    </TableCell>
+                    <TableCell align="right">
+                      <IconButton
+                        sx={{ color: Colors.primary_color }}
+                        aria-label="edit"
+                        onClick={() => handleCategoryById(EDIT, data)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        sx={{ color: Colors.primary_color }}
+                        aria-label="delete"
+                        onClick={() => handleCategoryById(DELETE, data)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10]}
+          component="div"
+          count={data?.total || 0}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Container>
+      <ConfirmModal
+        isOpen={isOpenConfirmModal}
+        message={CONFIRM_MESSAGE.DELETE}
+        handleNo={toggleConfirmModal}
+        handleYes={handleDelete}
+      />
     </Layout>
   );
 }
-
-// import React from "react";
-// import {
-// import { EditIcon } from '@mui/icons-material/Edit';
-//   TableBody,
-//   TableCell,
-//   TableContainer,
-//   TableHead,
-//   TableRow,
-//   Paper,
-//   Container,
-//   CssBaseline,
-//   Typography,
-//   Checkbox,
-// } from "@mui/material";
-
-// const data = [
-//  {
-//   id:1,
-//   title: 'Networking',
-//   author: 'Khine Zaw Htet',
-//   isbn: 'isbn',
-//   category: 'IT',
-//   publication_date:  '21/6/2000',
-//   amount: '20000MMK',
-//   place: 'First stand',
-//   created_by: 'Thet Hnin'
-//  }
-// ];
-
-// export default function BookList() {
-//   return (
-//     <Container component="main" maxWidth="lg">
-//       <CssBaseline />
-//       <Typography align="center" mt={2} mb={2} component="h1" variant="h5">
-//         Book List
-//       </Typography>
-//       <TableContainer sx={{ maxHeight: 440 }}>
-//         <Table stickyHeader aria-label="sticky table">
-//           <TableHead>
-//             <TableRow>
-//               <TableCell padding="checkbox">
-//                 <Checkbox
-//                   color="primary"
-//                   // indeterminate={numSelected > 0 && numSelected < rowCount}
-//                   // checked={rowCount > 0 && numSelected === rowCount}
-//                   // onChange={onSelectAllClick}
-//                   // inputProps={{
-//                   //   "aria-label": "select all desserts",
-//                   // }}
-//                 />
-//               </TableCell>
-//               <TableCell>Id</TableCell>
-//               <TableCell>Title</TableCell>
-//               <TableCell>Author</TableCell>
-//               <TableCell align="right">ISBN</TableCell>
-//               <TableCell align="right">Categories</TableCell>
-//               <TableCell align="right">Publication Date</TableCell>
-//               <TableCell align="right">Amount</TableCell>
-//               <TableCell align="right">Place</TableCell>
-//               <TableCell align="right">Created By</TableCell>
-//             </TableRow>
-//           </TableHead>
-//           <TableBody>
-//             {data.map((row) => (
-//               <TableRow key={row.id}>
-//                 <TableCell padding="checkbox">
-//                 <Checkbox
-//                   color="primary"
-//                 />
-//               </TableCell>
-//                 <TableCell component="th" scope="row">
-//                   {row.id}
-//                 </TableCell>
-//                 <TableCell>{row.title}</TableCell>
-//                 <TableCell>{row.author}</TableCell>
-//                 <TableCell align="right">{row.isbn}</TableCell>
-//                 <TableCell align="right">{row.category}</TableCell>
-//                 <TableCell align="right">{row.publication_date}</TableCell>
-//                 <TableCell align="right">{row.amount}</TableCell>
-//                 <TableCell align="right">{row.place}</TableCell>
-//                 <TableCell align="right">{row.created_by}</TableCell>
-
-//               </TableRow>
-//             ))}
-//           </TableBody>
-//         </Table>
-//       </TableContainer>
-//     </Container>
-//   );
-// }

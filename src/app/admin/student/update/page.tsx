@@ -13,7 +13,6 @@ import {
   STUDENT_UPDATE_TYPE,
 } from "@/initialValues/student";
 import { useAppSelector } from "@/hook/ReduxHooks";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { studentUpdate } from "@/services/student.service";
 import { STUDENT_LIST } from "@/const/routes";
@@ -22,15 +21,12 @@ const FROM_YEAR = 0;
 const TO_YEAR = 1;
 
 export default function StudentUpdate() {
-  const { data } = useSession();
   const router = useRouter();
 
   const { selectedStudent } = useAppSelector((state) => state.student);
 
   const handleSubmit = async (values: STUDENT_UPDATE_TYPE) => {
-    if (!data?.user?.id) return;
-    const request = { ...values, teacherId: data?.user?.id };
-    const res = await studentUpdate(request);
+    const res = await studentUpdate(values);
     if (!res) return;
 
     router.push(STUDENT_LIST);

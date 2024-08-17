@@ -51,13 +51,26 @@ export async function GET(request: NextRequest) {
     },
     skip: (pageNumber - 1) * size,
     take: size,
+    include: {
+      created_by: true,
+    },
   });
+
+  const changedNameCategories =
+    categories.length > 0
+      ? categories.map((category) => ({
+          id: category.id,
+          category: category.category,
+          createdBy: category.created_by.name,
+          createdDate: category.created_date,
+        }))
+      : [];
 
   const categoriesRes = {
     total: totalCategories,
     page: pageNumber,
     pageSize: size,
-    list: categories,
+    list: changedNameCategories,
   };
 
   return NextResponse.json(categoriesRes, SUCCESS);
