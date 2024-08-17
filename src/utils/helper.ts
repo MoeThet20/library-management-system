@@ -33,6 +33,9 @@ export const copyToClipboard = (text: string) => {
 export const setDateOnly = (originalDate: Date) =>
   dayjs(originalDate).startOf("day").format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
 
+export const setYearOnly = (originalDate: Date) =>
+  dayjs(originalDate).format("YYYY");
+
 export const debounce = (target: Function, ms: number) => {
   let timer: ReturnType<typeof setTimeout>;
 

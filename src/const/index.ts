@@ -21,12 +21,12 @@ export const OCCUPATION = [
   { value: "Others", label: "Others" },
 ];
 export const YEARS = [
-  { value: "first", label: "First Year" },
-  { value: "second", label: "Second Year" },
-  { value: "third", label: "Third Year" },
-  { value: "fourth", label: "Fourth Year" },
-  { value: "fifth", label: "Fifth Year" },
-  { value: "final", label: "Final Year" },
+  { value: "First", label: "First Year" },
+  { value: "Second", label: "Second Year" },
+  { value: "Third", label: "Third Year" },
+  { value: "Fourth", label: "Fourth Year" },
+  { value: "Fifth", label: "Fifth Year" },
+  { value: "Final", label: "Final Year" },
 ];
 
 export const CONFIRM_MESSAGE = {

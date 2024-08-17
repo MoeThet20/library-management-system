@@ -1,19 +1,29 @@
 import {
-  STUDENT_REGISTER_TYPE,
+  STUDENT_REGISTER_SERVICE_TYPE,
   STUDENT_UPDATE_TYPE,
 } from "@/initialValues/student";
 import { lmsClient } from "./api";
+import { setYearOnly } from "@/utils/helper";
 
 const STUDENT = "student";
 
-export const studentRegister = async (data: STUDENT_REGISTER_TYPE) => {
-  const { name, roleNumber, initialYear, currentYear, phoneNumber, teacherId } =
-    data;
+export const studentRegister = async (data: STUDENT_REGISTER_SERVICE_TYPE) => {
+  const {
+    name,
+    roleNumber,
+    initialYearFromDate,
+    initialYearToDate,
+    currentYear,
+    phoneNumber,
+    teacherId,
+  } = data;
 
   const res = await lmsClient.post(STUDENT, {
     name,
     roleNumber,
-    initialYear,
+    initialYear: `${setYearOnly(initialYearFromDate)}-${setYearOnly(
+      initialYearToDate
+    )}-${roleNumber}`,
     currentYear,
     phoneNumber,
     teacherId,
