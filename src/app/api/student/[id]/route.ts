@@ -17,13 +17,13 @@ export async function GET(request: NextRequest, { params }: ParamsProps) {
 export async function PATCH(request: NextRequest, { params }: ParamsProps) {
   const data = await request.json();
 
-  const { name, roleNumber, initialYear, currentYear, phoneNumber } = data;
+  const { id, name, roleNumber, initialYear, currentYear, phoneNumber } = data;
 
   const findStudent = await prisma.student.findUnique({
     where: { initial_year: initialYear },
   });
 
-  if (findStudent) {
+  if (findStudent && params.id !== findStudent.id) {
     return NextResponse.json({ error: `${name} already exist` }, CONFLICT);
   }
 

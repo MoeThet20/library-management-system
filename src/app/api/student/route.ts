@@ -63,13 +63,30 @@ export async function GET(request: NextRequest) {
     },
     skip: (pageNumber - 1) * size,
     take: size,
+    include: {
+      created_by: true,
+    },
   });
+
+  const changedNameStudent =
+    students.length > 0
+      ? students.map((student) => ({
+          id: student.id,
+          name: student.name,
+          roleNumber: student.role_number,
+          phoneNumber: student.phone_number,
+          currentYear: student.current_year,
+          initialYear: student.initial_year,
+          createdBy: student.created_by.name,
+          createdDate: student.created_date,
+        }))
+      : [];
 
   const studentRes = {
     total: totalStudents,
     page: pageNumber,
     pageSize: size,
-    list: students,
+    list: changedNameStudent,
   };
 
   return NextResponse.json(studentRes, SUCCESS);

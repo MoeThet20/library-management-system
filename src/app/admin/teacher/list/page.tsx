@@ -94,7 +94,6 @@ export default function TeacherList() {
   };
 
   const handleDelete = async () => {
-    selectedTeacher && (await teacherDelete(selectedTeacher?.id));
     setData((prev: any) => {
       return {
         ...prev,
@@ -104,6 +103,7 @@ export default function TeacherList() {
       };
     });
     toggleConfirmModal();
+    selectedTeacher && (await teacherDelete(selectedTeacher?.id));
   };
 
   const handleTeacherById = (action: ACTION, data: ListType) => {
@@ -150,10 +150,6 @@ export default function TeacherList() {
             Teacher List
           </Typography>
           <Box display="flex">
-            <SearchInput
-              value={searchValue}
-              onChange={(event) => handleSearchChange(event.target.value)}
-            />
             <Button
               variant="contained"
               sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
@@ -164,6 +160,10 @@ export default function TeacherList() {
             </Button>
           </Box>
         </Box>
+        <SearchInput
+          value={searchValue}
+          onChange={(event) => handleSearchChange(event.target.value)}
+        />
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>

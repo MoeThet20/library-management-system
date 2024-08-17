@@ -5,15 +5,17 @@ import { thunk } from "redux-thunk";
 import { storage } from "./storage";
 import messageModalSlice from "./features/messageModalSlice";
 import teacherSlice from "./features/teacherSlice";
+import studentSlice from "./features/studentSlice";
 
 const reducers = combineReducers({
   messageModal: messageModalSlice,
   teacher: teacherSlice,
+  student: studentSlice,
 });
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: [""],
+  whitelist: ["teacher", "student"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

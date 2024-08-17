@@ -32,12 +32,22 @@ export const studentRegister = async (data: STUDENT_REGISTER_SERVICE_TYPE) => {
 };
 
 export const studentUpdate = async (data: STUDENT_UPDATE_TYPE) => {
-  const { id, name, roleNumber, initialYear, currentYear, phoneNumber } = data;
+  const {
+    id,
+    name,
+    roleNumber,
+    initialYearFromDate,
+    initialYearToDate,
+    currentYear,
+    phoneNumber,
+  } = data;
 
   const res = await lmsClient.patch(`${STUDENT}/${id}`, {
     name,
     roleNumber,
-    initialYear,
+    initialYear: `${setYearOnly(initialYearFromDate)}-${setYearOnly(
+      initialYearToDate
+    )}-${roleNumber}`,
     currentYear,
     phoneNumber,
   });

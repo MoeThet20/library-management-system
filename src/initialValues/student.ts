@@ -32,14 +32,18 @@ export type STUDENT_UPDATE_TYPE = {
   id: string;
   name: string;
   roleNumber: number;
-  initialYear: string;
+  initialYearFromDate: Date;
+  initialYearToDate: Date;
   currentYear: string;
   phoneNumber: string;
 };
+
 export const STUDENT_UPDATE_INITIAL_VALUES = {
+  id: "",
   name: "",
   roleNumber: 0,
-  initialYear: "",
+  initialYearFromDate: new Date(dayjs().subtract(1, "year").toString()),
+  initialYearToDate: new Date(),
   currentYear: "",
   phoneNumber: "",
 };
