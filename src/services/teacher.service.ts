@@ -22,6 +22,7 @@ export const teacherUpdate = async (data: TEACHER_UPDATE_TYPE) => {
   const res = await lmsClient.patch(`${TEACHER}/${data.id}`, {
     name: data.name,
     rfid: data.rfid,
+    email: data.email,
     phoneNumber: data.phoneNumber,
     occupation: data.occupation,
   });

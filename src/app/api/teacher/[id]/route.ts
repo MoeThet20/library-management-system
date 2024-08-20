@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { NO_CONTENT, SUCCESS } from "@/const/status";
+import { CONFLICT, NO_CONTENT, SUCCESS } from "@/const/status";
 
 type ParamsProps = { params: { id: string } };
 
@@ -17,12 +17,21 @@ export async function GET(request: NextRequest, { params }: ParamsProps) {
 export async function PATCH(request: NextRequest, { params }: ParamsProps) {
   const data = await request.json();
 
-  const { name, rfid, phoneNumber, occupation } = data;
+  const { name, email, rfid, phoneNumber, occupation } = data;
+
+  const findTeacher = await prisma.teacher.findUnique({
+    where: { email: email },
+  });
+
+  if (findTeacher && params.id !== findTeacher.id) {
+    return NextResponse.json({ error: `${email} already exist` }, CONFLICT);
+  }
 
   const teacher = await prisma.teacher.update({
     where: { id: params.id },
     data: {
       name,
+      email,
       rfid,
       phone_number: phoneNumber,
       occupation,
