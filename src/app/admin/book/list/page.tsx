@@ -172,6 +172,7 @@ export default function BookList() {
             <TableHead>
               <TableRow>
                 <TableCell>No</TableCell>
+                <TableCell>ISBN</TableCell>
                 <TableCell>Title</TableCell>
                 <TableCell>Author</TableCell>
                 <TableCell align="right">Categories</TableCell>
@@ -199,6 +200,7 @@ export default function BookList() {
                     <TableCell component="th" scope="row">
                       {index + 1}
                     </TableCell>
+                    <TableCell>{data.isbn}</TableCell>
                     <TableCell>{data.title}</TableCell>
                     <TableCell>{data.author}</TableCell>
                     <TableCell align="right">
