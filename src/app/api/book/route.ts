@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { CONFLICT, SUCCESS } from "@/const/status";
+import { BOOK_CREATE_SERVICE_TYPE } from "@/initialValues/book";
 
 const prisma = new PrismaClient();
 
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
     isbn,
     categories,
     description,
-    publication_date,
+    publicationDate,
     amount,
     place,
     teacherId,
@@ -34,11 +35,9 @@ export async function POST(request: NextRequest) {
       isbn,
       categories,
       description,
-      publication_date,
+      publication_date: publicationDate,
       amount,
       place,
-      teacherId,
-      is_borrow_able: true,
       created_by: { connect: { id: teacherId } },
     },
   });
@@ -78,13 +77,44 @@ export async function GET(request: NextRequest) {
     },
     skip: (pageNumber - 1) * size,
     take: size,
+    include: {
+      created_by: true,
+    },
   });
+
+  const categories: Array<{
+    id: String;
+    category: String;
+  }> = await prisma.category.findMany();
+
+  function getCategoriesByIds(ids: Array<String>) {
+    return categories
+      .filter((item) => ids.includes(item.id))
+      .map((item) => item.category);
+  }
+
+  const changedNameBooks =
+    books.length > 0
+      ? books.map((book) => ({
+          id: book.id,
+          title: book.title,
+          author: book.author,
+          isbn: book.isbn,
+          categories: getCategoriesByIds(book.categories),
+          description: book.description,
+          publicationDate: book.publication_date,
+          amount: book.amount,
+          place: book.place,
+          createdBy: book.created_by.name,
+          createdDate: book.created_date,
+        }))
+      : [];
 
   const booksRes = {
     total: totalBooks,
     page: pageNumber,
     pageSize: size,
-    list: books,
+    list: changedNameBooks,
   };
 
   return NextResponse.json(booksRes, SUCCESS);

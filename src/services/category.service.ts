@@ -33,5 +33,10 @@ export const getCategoryWithQuery = async (
   return res?.data;
 };
 
+export const getCategories = async () => {
+  const res = await lmsClient.get(`${CATEGORY}`);
+  return res?.data;
+};
+
 export const categoryDelete = async (id: string) =>
   await lmsClient.delete(`${CATEGORY}/${id}`);

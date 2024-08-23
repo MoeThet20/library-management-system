@@ -7,17 +7,19 @@ import messageModalSlice from "./features/messageModalSlice";
 import teacherSlice from "./features/teacherSlice";
 import studentSlice from "./features/studentSlice";
 import categorySlice from "./features/categorySlice";
+import bookSlice from "./features/bookSlice";
 
 const reducers = combineReducers({
   messageModal: messageModalSlice,
   teacher: teacherSlice,
   student: studentSlice,
   category: categorySlice,
+  book: bookSlice,
 });
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["teacher", "student", "category"],
+  whitelist: ["teacher", "student", "category", "book"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

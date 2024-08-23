@@ -1,61 +1,164 @@
 "use client";
-import * as React from "react";
-import { Button, CssBaseline, Box, Typography, Container } from "@mui/material";
-import { Formik, Form } from "formik";
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  CssBaseline,
+  Box,
+  Typography,
+  Container,
+  capitalize,
+} from "@mui/material";
+import { Formik, Form, Field } from "formik";
 
 import { Select, TextInput, Layout } from "@/components/common";
 import { Colors } from "@/const/colors";
 import { YEARS } from "@/const";
+import {
+  BOOK_UPDATE_INITIAL_VALUES,
+  BOOK_UPDATE_TYPE,
+} from "@/initialValues/book";
+import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/hook/ReduxHooks";
+import { DatePicker } from "@/components/common";
+import { getCategories } from "@/services/category.service";
+import { BOOK_LIST } from "@/const/routes";
+import validation from "@/validation/book.service";
+import { bookUpdate } from "@/services/book.service";
+
+type ListType = {
+  id: string;
+  category: string;
+  createdBy: string;
+  createdDate: string;
+};
+
+type categoryType = {
+  value: string;
+  label: string;
+};
+
+const ZERO = 0;
 
 export default function BookUpdate() {
-  const handleSubmit = async (values: any) => {};
+  const router = useRouter();
+  const { selectedBook } = useAppSelector((state) => state.book);
+  const [categories, setCategories] = useState<Array<categoryType>>([]);
+  const [initialValues, setInitialValues] = useState<BOOK_UPDATE_TYPE>(
+    BOOK_UPDATE_INITIAL_VALUES
+  );
+
+  useEffect(() => {
+    getCategoryData();
+  }, []);
+
+  const getCategoryData = async () => {
+    const categoriesRes: Array<ListType> = await getCategories();
+    const categories =
+      categoriesRes.length === ZERO
+        ? []
+        : categoriesRes.map((category) => ({
+            value: category.id,
+            label: capitalize(category.category),
+          }));
+    setCategories(categories);
+
+    const initialValues =
+      categories.length > ZERO && selectedBook
+        ? {
+            id: selectedBook.id,
+            title: selectedBook.title,
+            author: selectedBook.author,
+            isbn: selectedBook.isbn,
+            categories: getCategoriesByCategory(
+              categories,
+              selectedBook.categories
+            ),
+            description: selectedBook.description,
+            publicationDate: selectedBook.publicationDate,
+            amount: selectedBook.amount,
+            place: selectedBook.place,
+            teacherId: selectedBook.teacherId,
+          }
+        : BOOK_UPDATE_INITIAL_VALUES;
+
+    setInitialValues(initialValues);
+  };
+
+  const getCategoriesByCategory = (
+    categories: Array<categoryType>,
+    ids: Array<String>
+  ) => {
+    return categories
+      .filter((item) => ids.includes(item.label.toLowerCase()))
+      .map((item) => item.value);
+  };
+
+  const handleSubmit = async (values: BOOK_UPDATE_TYPE) => {
+    const res = await bookUpdate(values);
+    if (!res) return;
+
+    router.push(BOOK_LIST);
+  };
 
   return (
     <Layout>
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <Box
-        sx={{
-          marginTop: 8,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Typography component="h1" variant="h5">
-          Book Update
-        </Typography>
-        <Formik
-          initialValues={{ name: "", password: "" }}
-          onSubmit={handleSubmit}
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
         >
-          {({ isSubmitting }) => (
-            <Form>
-              <TextInput name="title" label="Title" />
-              <TextInput name="author" label="Author" />
-              <TextInput name="isbn" label="ISBN" />
-
-              <Select name="categories" label="Categories" options={YEARS} />
-              <TextInput name="description" label="Description" />
-              <TextInput name="publication_date" label="Publication Date" />
-              <TextInput name="amount" label="Amount" />
-              <TextInput name="place" label="Place" />
-              <TextInput name="created_by" label="Created By" />
-
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2, backgroundColor: Colors.primary_color }}
-              >
-                Update
-              </Button>
-            </Form>
-          )}
-        </Formik>
-      </Box>
-    </Container>
+          <Typography component="h1" variant="h5">
+            Book Update
+          </Typography>
+          <Formik
+            enableReinitialize
+            initialValues={initialValues}
+            validationSchema={validation.bookCreateValidationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ isSubmitting, dirty }) => (
+              <Form>
+                <TextInput name="title" label="Title" />
+                <TextInput name="author" label="Author" />
+                <TextInput name="isbn" label="ISBN" />
+                <Select
+                  name="categories"
+                  label="Categories"
+                  multiple
+                  options={categories}
+                />
+                <Field
+                  name="publicationDate"
+                  label="Publication Date"
+                  component={DatePicker}
+                />
+                <TextInput name="amount" label="Number of book" type="number" />
+                <TextInput name="place" label="Place" multiline rows={3} />
+                <TextInput
+                  name="description"
+                  label="Description"
+                  multiline
+                  rows={4}
+                />
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || !dirty}
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2, backgroundColor: Colors.primary_color }}
+                >
+                  Update
+                </Button>
+              </Form>
+            )}
+          </Formik>
+        </Box>
+      </Container>
     </Layout>
   );
 }

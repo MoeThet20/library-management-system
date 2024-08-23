@@ -21,19 +21,21 @@ const FormikDatePicker: React.FC<FieldProps> = (props) => {
     ...field,
     value: field.value ? dayjs(field.value) : null,
     onChange: handleChange,
-    disablePast: true,
     slotProps: {
       textField: {
         error: form.touched[field.name] && form.errors[field.name],
         helperText: form.touched[field.name] && form.errors[field.name],
+        fullWidth: true,
       },
     },
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DatePicker {...configDatePicker} />
-    </LocalizationProvider>
+    <div className="mt-3">
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker {...configDatePicker} />
+      </LocalizationProvider>
+    </div>
   );
 };
 

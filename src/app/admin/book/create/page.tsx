@@ -1,24 +1,72 @@
-//  "use client";
-
-// import React from "react";
-
-// function BookSearch() {
-//   return <div>BookSearch</div>;
-// }
-
-// export default BookSearch;
-
 "use client";
-import * as React from "react";
-import { Button, CssBaseline, Box, Typography, Container } from "@mui/material";
-import { Formik, Form } from "formik";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  CssBaseline,
+  Box,
+  Typography,
+  Container,
+  capitalize,
+} from "@mui/material";
+import { Formik, Form, Field } from "formik";
 
-import { Select, TextInput, Layout } from "@/components/common";
+import { Select, TextInput, Layout, DatePicker } from "@/components/common";
 import { Colors } from "@/const/colors";
-import { YEARS } from "@/const";
+import { getCategories } from "@/services/category.service";
+import validation from "@/validation/book.service";
+import {
+  BOOK_CREATE_INITIAL_VALUES,
+  BOOK_CREATE_TYPE,
+} from "@/initialValues/book";
+import { bookCreate } from "@/services/book.service";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { BOOK_LIST } from "@/const/routes";
+
+type ListType = {
+  id: string;
+  category: string;
+  createdBy: string;
+  createdDate: string;
+};
+
+type categoryType = {
+  value: string;
+  label: string;
+};
+
+const ZERO = 0;
 
 export default function BookCreate() {
-  const handleSubmit = async (values: any) => {};
+  const { data } = useSession();
+  const router = useRouter();
+  const [categories, setCategories] = useState<Array<categoryType>>([]);
+
+  useEffect(() => {
+    getCategoryData();
+  }, []);
+
+  const getCategoryData = async () => {
+    const categoriesRes: Array<ListType> = await getCategories();
+    const categories =
+      categoriesRes.length === ZERO
+        ? []
+        : categoriesRes.map((category) => ({
+            value: category.id,
+            label: capitalize(category.category),
+          }));
+    setCategories(categories);
+  };
+
+  const handleSubmit = async (values: BOOK_CREATE_TYPE) => {
+    if (!data?.user?.id) return;
+
+    const request = { ...values, teacherId: data?.user?.id };
+    const res = await bookCreate(request);
+    if (!res) return;
+
+    router.push(BOOK_LIST);
+  };
 
   return (
     <Layout>
@@ -36,7 +84,8 @@ export default function BookCreate() {
             Book Create
           </Typography>
           <Formik
-            initialValues={{ name: "", password: "" }}
+            initialValues={BOOK_CREATE_INITIAL_VALUES}
+            validationSchema={validation.bookCreateValidationSchema}
             onSubmit={handleSubmit}
           >
             {({ isSubmitting }) => (
@@ -44,12 +93,25 @@ export default function BookCreate() {
                 <TextInput name="title" label="Title" />
                 <TextInput name="author" label="Author" />
                 <TextInput name="isbn" label="ISBN" />
-
-                <Select name="categories" label="Categories" options={YEARS} />
-                <TextInput name="description" label="Description" />
-                <TextInput name="publication_date" label="Publication Date" />
-                <TextInput name="amount" label="Amount" />
-                <TextInput name="place" label="Place" />
+                <Select
+                  name="categories"
+                  label="Categories"
+                  multiple
+                  options={categories}
+                />
+                <Field
+                  name="publicationDate"
+                  label="Publication Date"
+                  component={DatePicker}
+                />
+                <TextInput name="amount" label="Number of book" type="number" />
+                <TextInput name="place" label="Place" multiline rows={3} />
+                <TextInput
+                  name="description"
+                  label="Description"
+                  multiline
+                  rows={4}
+                />
                 <Button
                   type="submit"
                   disabled={isSubmitting}

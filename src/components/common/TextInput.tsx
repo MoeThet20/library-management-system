@@ -7,6 +7,8 @@ interface TextInputProps {
   label: string;
   type?: string;
   disabled?: boolean;
+  multiline?: boolean;
+  rows?: number;
 }
 
 const TextInput: React.FC<TextInputProps> = ({
@@ -14,6 +16,8 @@ const TextInput: React.FC<TextInputProps> = ({
   label,
   type = "text",
   disabled = false,
+  multiline = false,
+  rows,
 }) => {
   return (
     <Field name={name}>
@@ -23,6 +27,8 @@ const TextInput: React.FC<TextInputProps> = ({
           disabled={disabled}
           type={type}
           label={label}
+          multiline={multiline}
+          rows={rows}
           margin="normal"
           error={meta.touched && Boolean(meta.error)}
           helperText={meta.touched && meta.error}

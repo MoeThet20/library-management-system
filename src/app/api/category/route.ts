@@ -31,6 +31,12 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const searchParams = new URLSearchParams(url.searchParams);
 
+  if (!searchParams.get("page")) {
+    const categories = await prisma.category.findMany();
+
+    return NextResponse.json(categories, SUCCESS);
+  }
+
   const page: number = Number(searchParams.get("page")) || 1;
   const pageSize: number = Number(searchParams.get("pageSize")) || 10;
   const search: string = searchParams.get("search") || "";

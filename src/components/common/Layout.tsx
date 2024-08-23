@@ -28,6 +28,7 @@ import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { LOGIN } from "@/const/routes";
+import { Modal } from "@/components/common";
 
 const drawerWidth = 240;
 const LOGOUT = "logout";
@@ -289,6 +290,7 @@ const Page: React.FC<AppProps> = ({ children }) => {
         <DrawerHeader />
         {children}
       </Box>
+      <Modal />
     </Box>
   );
 };

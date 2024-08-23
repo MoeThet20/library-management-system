@@ -1,18 +1,37 @@
-import { BOOK_CREATE_TYPE, BOOK_UPDATE_TYPE } from "@/initialValues/book";
+import {
+  BOOK_CREATE_SERVICE_TYPE,
+  BOOK_UPDATE_TYPE,
+} from "@/initialValues/book";
 import { lmsClient } from "./api";
 
 const BOOK = "book";
 
-export const bookCreate = async (data: BOOK_CREATE_TYPE) => {
+export const bookCreate = async (data: BOOK_CREATE_SERVICE_TYPE) => {
   const res = await lmsClient.post(BOOK, {
-    data,
+    title: data.title,
+    author: data.author,
+    isbn: data.isbn.toLocaleLowerCase().trim(),
+    categories: data.categories,
+    description: data.description,
+    publicationDate: data.publicationDate,
+    amount: data.amount,
+    place: data.place,
+    teacherId: data.teacherId,
   });
   return res;
 };
 
 export const bookUpdate = async (data: BOOK_UPDATE_TYPE) => {
   const res = await lmsClient.patch(`${BOOK}/${data.id}`, {
-    data: { ...data, isBorrowAble: true }, //TODO need to add isBorrowAble logic
+    title: data.title,
+    author: data.author,
+    isbn: data.isbn.toLocaleLowerCase().trim(),
+    categories: data.categories,
+    description: data.description,
+    publicationDate: data.publicationDate,
+    amount: data.amount,
+    place: data.place,
+    teacherId: data.teacherId,
   });
 
   return res;

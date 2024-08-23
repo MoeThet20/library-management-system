@@ -6,9 +6,17 @@ interface TextInputProps {
   name: string;
   label: string;
   options: Array<{ value: string; label: string }>;
+  multiple?: boolean;
 }
 
-const Select: React.FC<TextInputProps> = ({ name, label, options }) => {
+const ZERO = 0;
+
+const Select: React.FC<TextInputProps> = ({
+  name,
+  label,
+  options,
+  multiple = false,
+}) => {
   return (
     <Field name={name}>
       {({ field, meta }: FieldProps) => (
@@ -20,13 +28,17 @@ const Select: React.FC<TextInputProps> = ({ name, label, options }) => {
           error={meta.touched && Boolean(meta.error)}
           helperText={meta.touched && meta.error}
           fullWidth
+          SelectProps={{ multiple: multiple }}
         >
-          {options.length > 0 &&
+          {options.length === ZERO ? (
+            <p className="text-center">There is no {label}</p>
+          ) : (
             options.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
               </MenuItem>
-            ))}
+            ))
+          )}
         </TextField>
       )}
     </Field>

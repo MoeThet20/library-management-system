@@ -1,64 +1,104 @@
 "use client";
-import * as React from "react";
-import { alpha } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  Button,
+  CssBaseline,
+  Box,
+  Typography,
+  Container,
+  IconButton,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TablePagination,
+  capitalize,
+} from "@mui/material";
+import {
+  ConfirmModal,
+  Layout,
+  Loading,
+  SearchInput,
+} from "@/components/common";
 import { Colors } from "@/const/colors";
-import { Button, Container, CssBaseline } from "@mui/material";
-import { Layout, SearchInput } from "@/components/common";
 import { useRouter } from "next/navigation";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { BOOK_CREATE, BOOK_UPDATE } from "@/const/routes";
+import { debounce, ONE_SECOND, yearRoleNumberConverter } from "@/utils/helper";
+import {
+  CONFIRM_MESSAGE,
+  convertDateString,
+  DAY_MONTH_YEAR_HOUR_MINUTE,
+} from "@/const";
+import { updatedSelectedBook } from "@/redux/features/bookSlice";
+import { useAppDispatch } from "@/hook/ReduxHooks";
+import { getBookWithQuery, bookDelete } from "@/services/book.service";
 
-const rows = [
-  {
-    id: 1,
-    title: "Networking",
-    author: "Khine Zaw Htet",
-    isbn: "ISBN",
-    category: "IT",
-    publication_date: "21/6/2000",
-    amount: "1",
-    place: "First stand",
-    created_by: "Thet Hnin",
-    created_date: "13/8/2024",
-  },
-  {
-    id: 2,
-    title: "Networking",
-    author: "Khine Zaw Htet",
-    isbn: "ISBN",
-    category: "IT",
-    publication_date: "21/6/2000",
-    amount: "1",
-    place: "First stand",
-    created_by: "Thet Hnin",
-    created_date: "13/8/2024",
-  },
-];
+type ListType = {
+  id: string;
+  title: string;
+  author: string;
+  isbn: string;
+  categories: Array<string>;
+  description: string;
+  publicationDate: Date;
+  amount: number;
+  place: string;
+  createdBy: string;
+  createdDate: string;
+};
 
-export default function EnhancedTable() {
+type DataType = {
+  total: number;
+  page: number;
+  pageSize: number;
+  list: Array<ListType>;
+};
+
+const DELETE = "DELETE";
+const EDIT = "EDIT";
+const ONE = 1;
+
+type ACTION = "DELETE" | "EDIT";
+
+export default function BookList() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [searchValue, setSearchValue] = React.useState('')
-  const router = useRouter();
+  const [searchValue, setSearchValue] = React.useState("");
+  const [data, setData] = useState<DataType | null>(null);
+  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
+  const [selectedBook, setSelectedBook] = useState<ListType | null>(null);
 
-  const handleCreateBook = () => {
-    router.push(BOOK_CREATE);
+  useEffect(() => {
+    setData(null);
+    getBookData();
+  }, [page, rowsPerPage]);
+
+  const getBookData = async () => {
+    const res = await getBookWithQuery(page + 1, rowsPerPage, searchValue);
+    setData(res);
   };
-  const handleDelete = () => {};
-  const handleEditClick = () => {
-    router.push(BOOK_UPDATE);
+
+  const goToCreateBook = () => router.push(BOOK_CREATE);
+
+  const handleDelete = async () => {
+    setData((prev: any) => {
+      return {
+        ...prev,
+        list: prev?.list.filter(
+          (book: ListType) => book.id !== selectedBook?.id
+        ),
+      };
+    });
+    toggleConfirmModal();
+    selectedBook && (await bookDelete(selectedBook?.id));
   };
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -66,8 +106,38 @@ export default function EnhancedTable() {
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setRowsPerPage(+event.target.value);
+    setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const fetchResults = useCallback(
+    debounce(async (query: any) => {
+      try {
+        setData(null);
+        const res = await getBookWithQuery(page + 1, rowsPerPage, query);
+        setData(res);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }, ONE_SECOND),
+    []
+  );
+
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value);
+    fetchResults(value);
+  };
+
+  const toggleConfirmModal = () => setIsOpenConfirmModal((prev) => !prev);
+
+  const handleBookById = (action: ACTION, data: ListType) => {
+    setSelectedBook(data);
+    if (action === DELETE) {
+      toggleConfirmModal();
+      return;
+    }
+    dispatch(updatedSelectedBook(data));
+    router.push(BOOK_UPDATE);
   };
 
   return (
@@ -84,16 +154,19 @@ export default function EnhancedTable() {
             Book List
           </Typography>
           <Box display="flex">
-            <SearchInput value={searchValue} onChange={event=>setSearchValue(event.target.value)}  />
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
-            onClick={handleCreateBook}
-          >
-            Create
-          </Button>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
+              onClick={goToCreateBook}
+            >
+              Create
+            </Button>
           </Box>
         </Box>
+        <SearchInput
+          value={searchValue}
+          onChange={(event) => handleSearchChange(event.target.value)}
+        />
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -101,154 +174,89 @@ export default function EnhancedTable() {
                 <TableCell>No</TableCell>
                 <TableCell>Title</TableCell>
                 <TableCell>Author</TableCell>
-                <TableCell align="right">ISBN</TableCell>
                 <TableCell align="right">Categories</TableCell>
                 <TableCell align="right">Created By</TableCell>
                 <TableCell align="right">Created Date</TableCell>
                 <TableCell />
-                <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
-              {(rowsPerPage > 0
-                ? rows.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-                : rows
-              ).map((row, index) => (
-                <TableRow key={row.id}>
-                  <TableCell component="th" scope="row">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell>{row.title}</TableCell>
-                  <TableCell>{row.author}</TableCell>
-                  <TableCell align="right">{row.isbn}</TableCell>
-                  <TableCell align="right">{row.category}</TableCell>
-                  <TableCell align="right">{row.created_by}</TableCell>
-                  <TableCell align="right">{row.created_date}</TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      sx={{ color: Colors.primary_color }}
-                      aria-label="edit"
-                      onClick={() => handleEditClick()}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      sx={{ color: Colors.primary_color }}
-                      aria-label="delete"
-                      onClick={() => handleDelete()}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+              {!data ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    <Loading />
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : data?.list.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} align="center">
+                    There is no book.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                data?.list.map((data, index) => (
+                  <TableRow key={data.id}>
+                    <TableCell component="th" scope="row">
+                      {index + 1}
+                    </TableCell>
+                    <TableCell>{data.title}</TableCell>
+                    <TableCell>{data.author}</TableCell>
+                    <TableCell align="right">
+                      {data.categories.map(
+                        (category, index) =>
+                          `${capitalize(category)}${
+                            data.categories.length > ONE &&
+                            data.categories.length !== index + 1
+                              ? ","
+                              : ""
+                          }`
+                      )}
+                    </TableCell>
+                    <TableCell align="right">{data.createdBy}</TableCell>
+                    <TableCell align="right">
+                      {convertDateString(
+                        data.createdDate,
+                        DAY_MONTH_YEAR_HOUR_MINUTE
+                      )}
+                    </TableCell>
+                    <TableCell align="right">
+                      <IconButton
+                        sx={{ color: Colors.primary_color }}
+                        aria-label="edit"
+                        onClick={() => handleBookById(EDIT, data)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        sx={{ color: Colors.primary_color }}
+                        aria-label="delete"
+                        onClick={() => handleBookById(DELETE, data)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[5, 10]}
           component="div"
-          count={rows.length}
+          count={data?.total || 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Container>
+      <ConfirmModal
+        isOpen={isOpenConfirmModal}
+        message={CONFIRM_MESSAGE.DELETE}
+        handleNo={toggleConfirmModal}
+        handleYes={handleDelete}
+      />
     </Layout>
   );
 }
-
-// import React from "react";
-// import {
-// import { EditIcon } from '@mui/icons-material/Edit';
-//   TableBody,
-//   TableCell,
-//   TableContainer,
-//   TableHead,
-//   TableRow,
-//   Paper,
-//   Container,
-//   CssBaseline,
-//   Typography,
-//   Checkbox,
-// } from "@mui/material";
-
-// const data = [
-//  {
-//   id:1,
-//   title: 'Networking',
-//   author: 'Khine Zaw Htet',
-//   isbn: 'isbn',
-//   category: 'IT',
-//   publication_date:  '21/6/2000',
-//   amount: '20000MMK',
-//   place: 'First stand',
-//   created_by: 'Thet Hnin'
-//  }
-// ];
-
-// export default function BookList() {
-//   return (
-//     <Container component="main" maxWidth="lg">
-//       <CssBaseline />
-//       <Typography align="center" mt={2} mb={2} component="h1" variant="h5">
-//         Book List
-//       </Typography>
-//       <TableContainer sx={{ maxHeight: 440 }}>
-//         <Table stickyHeader aria-label="sticky table">
-//           <TableHead>
-//             <TableRow>
-//               <TableCell padding="checkbox">
-//                 <Checkbox
-//                   color="primary"
-//                   // indeterminate={numSelected > 0 && numSelected < rowCount}
-//                   // checked={rowCount > 0 && numSelected === rowCount}
-//                   // onChange={onSelectAllClick}
-//                   // inputProps={{
-//                   //   "aria-label": "select all desserts",
-//                   // }}
-//                 />
-//               </TableCell>
-//               <TableCell>Id</TableCell>
-//               <TableCell>Title</TableCell>
-//               <TableCell>Author</TableCell>
-//               <TableCell align="right">ISBN</TableCell>
-//               <TableCell align="right">Categories</TableCell>
-//               <TableCell align="right">Publication Date</TableCell>
-//               <TableCell align="right">Amount</TableCell>
-//               <TableCell align="right">Place</TableCell>
-//               <TableCell align="right">Created By</TableCell>
-//             </TableRow>
-//           </TableHead>
-//           <TableBody>
-//             {data.map((row) => (
-//               <TableRow key={row.id}>
-//                 <TableCell padding="checkbox">
-//                 <Checkbox
-//                   color="primary"
-//                 />
-//               </TableCell>
-//                 <TableCell component="th" scope="row">
-//                   {row.id}
-//                 </TableCell>
-//                 <TableCell>{row.title}</TableCell>
-//                 <TableCell>{row.author}</TableCell>
-//                 <TableCell align="right">{row.isbn}</TableCell>
-//                 <TableCell align="right">{row.category}</TableCell>
-//                 <TableCell align="right">{row.publication_date}</TableCell>
-//                 <TableCell align="right">{row.amount}</TableCell>
-//                 <TableCell align="right">{row.place}</TableCell>
-//                 <TableCell align="right">{row.created_by}</TableCell>
-
-//               </TableRow>
-//             ))}
-//           </TableBody>
-//         </Table>
-//       </TableContainer>
-//     </Container>
-//   );
-// }

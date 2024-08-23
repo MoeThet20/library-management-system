@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { NO_CONTENT, SUCCESS } from "@/const/status";
+import { CONFLICT, NO_CONTENT, SUCCESS } from "@/const/status";
 
 type ParamsProps = { params: { id: string } };
 
@@ -27,9 +27,15 @@ export async function PATCH(request: NextRequest, { params }: ParamsProps) {
     amount,
     place,
     teacherId,
-    isBorrowAble,
   } = data;
 
+  const findBook = await prisma.books.findUnique({
+    where: { isbn: isbn },
+  });
+
+  if (findBook && params.id !== findBook.id) {
+    return NextResponse.json({ error: "Book already exist" }, CONFLICT);
+  }
   const book = await prisma.books.update({
     where: { id: params.id },
     data: {
@@ -42,7 +48,6 @@ export async function PATCH(request: NextRequest, { params }: ParamsProps) {
       amount,
       place,
       teacherId,
-      is_borrow_able: isBorrowAble,
     },
   });
 

@@ -2,23 +2,34 @@ export type BOOK_CREATE_TYPE = {
   title: string;
   author: string;
   isbn: string;
-  categories: Array<String>;
+  categories: Array<string>;
   description: string;
-  publication_date: Date;
+  publicationDate: Date;
+  amount: number;
+  place: string;
+};
+
+export type BOOK_CREATE_SERVICE_TYPE = {
+  title: string;
+  author: string;
+  isbn: string;
+  categories: Array<string>;
+  description: string;
+  publicationDate: Date;
   amount: number;
   place: string;
   teacherId: string;
 };
+
 export const BOOK_CREATE_INITIAL_VALUES = {
   title: "",
   author: "",
   isbn: "",
   categories: [],
   description: "",
-  publication_date: new Date(),
-  amount: 0,
+  publicationDate: new Date(),
+  amount: 1,
   place: "",
-  teacherId: "",
 };
 
 export type BOOK_UPDATE_TYPE = {
@@ -28,7 +39,7 @@ export type BOOK_UPDATE_TYPE = {
   isbn: string;
   categories: Array<String>;
   description: string;
-  publication_date: Date;
+  publicationDate: Date;
   amount: number;
   place: string;
   teacherId: string;
@@ -40,8 +51,8 @@ export const BOOK_UPDATE_INITIAL_VALUES = {
   isbn: "",
   categories: [],
   description: "",
-  publication_date: new Date(),
-  amount: 0,
+  publicationDate: new Date(),
+  amount: 1,
   place: "",
   teacherId: "",
 };
