@@ -192,7 +192,7 @@ export default function StudentList() {
                 data?.list.map((data, index) => (
                   <TableRow key={data.id}>
                     <TableCell component="th" scope="row">
-                      {index + 1}
+                      {page * rowsPerPage + index + 1}
                     </TableCell>
                     <TableCell>{data.name}</TableCell>
                     <TableCell>

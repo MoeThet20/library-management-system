@@ -193,7 +193,7 @@ export default function CategoryList() {
                 data?.list.map((data, index) => (
                   <TableRow key={data.id}>
                     <TableCell component="th" scope="row">
-                      {index + 1}
+                      {page * rowsPerPage + index + 1}
                     </TableCell>
                     <TableCell>{capitalize(data.category)}</TableCell>
                     <TableCell align="right">{data.createdBy}</TableCell>
