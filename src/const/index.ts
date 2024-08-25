@@ -6,8 +6,10 @@ export const DAY_MONTH_YEAR = "DD/MM/YY";
 
 export const DAY_MONTH_YEAR_HOUR_MINUTE = "DD/MM/YY h:mm A";
 
+export const YEAR_MONTH_DAY = "YYYY-MM-DD";
+
 export const convertDateString = (
-  date: string,
+  date: string | Date,
   format: string = DAY_MONTH_YEAR
 ) => dayjs(date).format(format).toString();
 

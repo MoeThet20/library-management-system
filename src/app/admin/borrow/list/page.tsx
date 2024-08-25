@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   CssBaseline,
@@ -13,27 +13,22 @@ import {
   TableCell,
   TableBody,
   TablePagination,
-  capitalize,
 } from "@mui/material";
-import { Layout, Loading, SearchInput } from "@/components/common";
+import { DatePicker, Layout, Loading } from "@/components/common";
 import { Colors } from "@/const/colors";
 import { useRouter } from "next/navigation";
 import { BORROW_CREATE } from "@/const/routes";
-import { debounce, ONE_SECOND } from "@/utils/helper";
 import { convertDateString, DAY_MONTH_YEAR_HOUR_MINUTE } from "@/const";
-import { getBookWithQuery } from "@/services/book.service";
+import { getBorrowBookWithQuery } from "@/services/borrow.service";
+import { Field, Form, Formik } from "formik";
+import { BORROW_BOOK_SEARCH_INITIAL_VALUE } from "@/initialValues/borrow";
+import validation from "@/validation/borrow.service";
 
 type ListType = {
   id: string;
   title: string;
-  author: string;
-  isbn: string;
-  categories: Array<string>;
-  description: string;
-  publicationDate: Date;
-  amount: number;
-  place: string;
-  createdBy: string;
+  studentName: string;
+  teacherName: string;
   createdDate: string;
 };
 
@@ -44,13 +39,13 @@ type DataType = {
   list: Array<ListType>;
 };
 
+const ZERO = 0;
 const ONE = 1;
 
 export default function BorrowList() {
   const router = useRouter();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [searchValue, setSearchValue] = React.useState("");
   const [data, setData] = useState<DataType | null>(null);
 
   useEffect(() => {
@@ -59,7 +54,7 @@ export default function BorrowList() {
   }, [page, rowsPerPage]);
 
   const getBorrowData = async () => {
-    const res = await getBookWithQuery(page + 1, rowsPerPage, searchValue);
+    const res = await getBorrowBookWithQuery(page + 1, rowsPerPage);
     setData(res);
   };
 
@@ -76,22 +71,17 @@ export default function BorrowList() {
     setPage(0);
   };
 
-  const fetchResults = useCallback(
-    debounce(async (query: any) => {
-      try {
-        setData(null);
-        const res = await getBookWithQuery(page + 1, rowsPerPage, query);
-        setData(res);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }, ONE_SECOND),
-    []
-  );
+  const handleSubmit = async (values: { startDate: Date; endDate: Date }) => {
+    setData(null);
 
-  const handleSearchChange = (value: string) => {
-    setSearchValue(value);
-    fetchResults(value);
+    const res = await getBorrowBookWithQuery(
+      1,
+      rowsPerPage,
+      values.startDate,
+      values.endDate
+    );
+
+    setData(res);
   };
 
   return (
@@ -117,33 +107,56 @@ export default function BorrowList() {
             </Button>
           </Box>
         </Box>
-        <SearchInput
-          value={searchValue}
-          onChange={(event) => handleSearchChange(event.target.value)}
-        />
-        <TableContainer sx={{ maxHeight: 440 }}>
+        <Formik
+          initialValues={BORROW_BOOK_SEARCH_INITIAL_VALUE}
+          validationSchema={validation.borrowSearchValidationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              <div className="flex justify-center">
+                <div className="my-3 mr-3">
+                  <Typography variant="body2">Start Date</Typography>
+                  <Field name="startDate" component={DatePicker} />
+                </div>
+                <div className="my-3 ml-3">
+                  <Typography variant="body2">End Date</Typography>
+                  <Field name="endDate" component={DatePicker} />
+                </div>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  fullWidth
+                  variant="outlined"
+                  sx={{ mt: 3, mb: 2, maxWidth: "20%", marginLeft: 10 }}
+                >
+                  Search
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+        <TableContainer sx={{ maxHeight: 440, marginTop: 2 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
                 <TableCell>No</TableCell>
-                <TableCell>ISBN</TableCell>
-                <TableCell>Title</TableCell>
-                <TableCell>Author</TableCell>
-                <TableCell align="right">Categories</TableCell>
-                <TableCell align="right">Created By</TableCell>
-                <TableCell align="right">Created Date</TableCell>
+                <TableCell>Book Title</TableCell>
+                <TableCell>Borrow Student</TableCell>
+                <TableCell>Borrow By</TableCell>
+                <TableCell align="right">Borrowed Date</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {!data ? (
                 <TableRow>
-                  <TableCell colSpan={8} align="center">
+                  <TableCell colSpan={5} align="center">
                     <Loading />
                   </TableCell>
                 </TableRow>
-              ) : data?.list.length === 0 ? (
+              ) : data?.list.length === ZERO ? (
                 <TableRow>
-                  <TableCell colSpan={8} align="center">
+                  <TableCell colSpan={5} align="center">
                     There is no borrow book.
                   </TableCell>
                 </TableRow>
@@ -151,23 +164,11 @@ export default function BorrowList() {
                 data?.list.map((data, index) => (
                   <TableRow key={data.id}>
                     <TableCell component="th" scope="row">
-                      {page * rowsPerPage + index + 1}
+                      {page * rowsPerPage + index + ONE}
                     </TableCell>
-                    <TableCell>{data.isbn}</TableCell>
                     <TableCell>{data.title}</TableCell>
-                    <TableCell>{data.author}</TableCell>
-                    <TableCell align="right">
-                      {data.categories.map(
-                        (category, index) =>
-                          `${capitalize(category)}${
-                            data.categories.length > ONE &&
-                            data.categories.length !== index + 1
-                              ? ","
-                              : ""
-                          }`
-                      )}
-                    </TableCell>
-                    <TableCell align="right">{data.createdBy}</TableCell>
+                    <TableCell>{data.studentName}</TableCell>
+                    <TableCell>{data.teacherName}</TableCell>
                     <TableCell align="right">
                       {convertDateString(
                         data.createdDate,

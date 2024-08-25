@@ -118,7 +118,7 @@ export default function BookUpdate() {
           <Formik
             enableReinitialize
             initialValues={initialValues}
-            validationSchema={validation.bookCreateValidationSchema}
+            validationSchema={validation.bookValidationSchema}
             onSubmit={handleSubmit}
           >
             {({ isSubmitting, dirty }) => (

@@ -85,7 +85,7 @@ export default function BookCreate() {
           </Typography>
           <Formik
             initialValues={BOOK_CREATE_INITIAL_VALUES}
-            validationSchema={validation.bookCreateValidationSchema}
+            validationSchema={validation.bookValidationSchema}
             onSubmit={handleSubmit}
           >
             {({ isSubmitting }) => (
@@ -99,11 +99,10 @@ export default function BookCreate() {
                   multiple
                   options={categories}
                 />
-                <Field
-                  name="publicationDate"
-                  label="Publication Date"
-                  component={DatePicker}
-                />
+                <div className="my-3">
+                  <Typography variant="body2">Publication Date</Typography>
+                  <Field name="publicationDate" component={DatePicker} />
+                </div>
                 <TextInput name="amount" label="Number of book" type="number" />
                 <TextInput name="place" label="Place" multiline rows={3} />
                 <TextInput

@@ -1,5 +1,7 @@
 import { BORROW_BOOK_TYPE } from "@/initialValues/borrow";
 import { lmsClient } from "./api";
+import { convertDateString, YEAR_MONTH_DAY } from "@/const";
+import dayjs from "dayjs";
 
 const BORROW = "borrow";
 
@@ -15,10 +17,14 @@ export const borrowBookCreate = async (data: BORROW_BOOK_TYPE) => {
 export const getBorrowBookWithQuery = async (
   page: number = 1,
   pageSize: number = 10,
-  search: string = ""
+  startDate: Date = new Date(dayjs().subtract(1, "day").format(YEAR_MONTH_DAY)),
+  endDate: Date = new Date()
 ) => {
+  const convertedStartDate = convertDateString(startDate, YEAR_MONTH_DAY);
+  const convertedEndDate = convertDateString(endDate, YEAR_MONTH_DAY);
+
   const res = await lmsClient.get(
-    `${BORROW}?page=${page}&pageSize=${pageSize}&search=${search}`
+    `${BORROW}?page=${page}&pageSize=${pageSize}&startDate=${convertedStartDate}&endDate=${convertedEndDate}`
   );
   return res?.data;
 };

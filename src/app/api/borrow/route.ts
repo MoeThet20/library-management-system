@@ -36,24 +36,53 @@ export async function GET(request: NextRequest) {
 
   const page: number = Number(searchParams.get("page")) || 1;
   const pageSize: number = Number(searchParams.get("pageSize")) || 10;
-  const search: string = searchParams.get("search") || "";
+  const startDate: string = searchParams.get("startDate") || "";
+  const endDate: string = searchParams.get("endDate") || "";
 
   const pageNumber = page;
   const size = pageSize;
-  const searchTerm = search;
-  //TODO need to apply by date range and need to populate the data
-  const totalBorrowBook = await prisma.borrowBook.count();
+
+  const totalBorrowBook = await prisma.borrowBook.count({
+    where: {
+      created_date: {
+        gte: new Date(startDate),
+        lte: new Date(endDate),
+      },
+    },
+  });
 
   const borrowBook = await prisma.borrowBook.findMany({
+    where: {
+      created_date: {
+        gte: new Date(startDate),
+        lte: new Date(endDate),
+      },
+    },
     skip: (pageNumber - 1) * size,
     take: size,
+    include: {
+      book_id: true,
+      borrowed_by: true,
+      created_by: true,
+    },
   });
+
+  const changedNameBorrowBook =
+    borrowBook.length > 0
+      ? borrowBook.map((borrow) => ({
+          id: borrow.id,
+          title: borrow.book_id.title,
+          studentName: borrow.borrowed_by.name,
+          teacherName: borrow.created_by.name,
+          createdDate: borrow.created_date,
+        }))
+      : [];
 
   const borrowBookRes = {
     total: totalBorrowBook,
     page: pageNumber,
     pageSize: size,
-    list: borrowBook,
+    list: changedNameBorrowBook,
   };
 
   return NextResponse.json(borrowBookRes, SUCCESS);
