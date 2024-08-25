@@ -26,8 +26,8 @@ import { YEARS } from "@/const";
 import { getStudentWithQuery } from "@/services/student.service";
 import { BORROW_BOOK_TYPE } from "@/initialValues/borrow";
 import { borrowBookCreate } from "@/services/borrow.service";
-
-const ZERO = 0;
+import { useAppDispatch } from "@/hook/ReduxHooks";
+import { enableErrorMessageModal } from "@/redux/features/messageModalSlice";
 
 type ListType = {
   id: string;
@@ -74,9 +74,13 @@ type StudentDataType = {
   list: Array<StudentType>;
 };
 
+const ZERO = 0;
+const EMPTY = "";
+
 export default function BorrowCreate() {
   const { data: sessionData } = useSession();
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [data, setData] = useState<DataType | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [selectedBook, setSelectedBook] = useState<Array<ListType> | []>([]);
@@ -150,8 +154,12 @@ export default function BorrowCreate() {
   };
 
   const handleSubmit = async () => {
+    const unSelectedStudent = student === EMPTY;
     const noSelectedBook = selectedBook.length === ZERO;
-    if (!sessionData?.user?.id || noSelectedBook) return;
+    if (unSelectedStudent) {
+      dispatch(enableErrorMessageModal("Please select student."));
+    }
+    if (!sessionData?.user?.id || noSelectedBook || unSelectedStudent) return;
 
     const request: BORROW_BOOK_TYPE = {
       books: selectedBook.map((book) => book.id),
