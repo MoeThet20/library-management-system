@@ -5,13 +5,20 @@ import { Colors } from "@/const/colors";
 
 interface SearchInputProps {
   value: string;
+  label?: string;
+  isSearchIcon?: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const SearchInput: React.FC<SearchInputProps> = ({ value, onChange }) => {
+const SearchInput: React.FC<SearchInputProps> = ({
+  label = "Search",
+  value,
+  isSearchIcon = true,
+  onChange,
+}) => {
   return (
     <TextField
-      label="Search"
+      label={label}
       variant="outlined"
       value={value}
       onChange={onChange}
@@ -29,7 +36,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ value, onChange }) => {
         },
       }}
       InputProps={{
-        endAdornment: (
+        endAdornment: isSearchIcon && (
           <InputAdornment position="end">
             <SearchIcon sx={{ color: Colors.primary_color }} />
           </InputAdornment>

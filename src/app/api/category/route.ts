@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 import { CONFLICT, SUCCESS } from "@/const/status";
 
 const prisma = new PrismaClient();

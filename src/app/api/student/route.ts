@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 import { CONFLICT, SUCCESS } from "@/const/status";
 
 const prisma = new PrismaClient();
@@ -40,33 +39,44 @@ export async function GET(request: NextRequest) {
   const page: number = Number(searchParams.get("page")) || 1;
   const pageSize: number = Number(searchParams.get("pageSize")) || 10;
   const search: string = searchParams.get("search") || "";
+  const allSearch: string = searchParams.get("allSearch") || "false";
+
+  const isAllSearch = allSearch == "true";
 
   const pageNumber = page;
   const size = pageSize;
   const searchTerm = search;
 
-  const totalStudents = await prisma.student.count({
-    where: {
-      OR: [
-        { name: { contains: searchTerm, mode: "insensitive" } },
-        { phone_number: { contains: searchTerm, mode: "insensitive" } },
-      ],
-    },
-  });
+  const totalStudents = isAllSearch
+    ? await prisma.student.count()
+    : await prisma.student.count({
+        where: {
+          OR: [
+            { name: { contains: searchTerm, mode: "insensitive" } },
+            { phone_number: { contains: searchTerm, mode: "insensitive" } },
+          ],
+        },
+      });
 
-  const students = await prisma.student.findMany({
-    where: {
-      OR: [
-        { name: { contains: searchTerm, mode: "insensitive" } },
-        { phone_number: { contains: searchTerm, mode: "insensitive" } },
-      ],
-    },
-    skip: (pageNumber - 1) * size,
-    take: size,
-    include: {
-      created_by: true,
-    },
-  });
+  const students = isAllSearch
+    ? await prisma.student.findMany({
+        include: {
+          created_by: true,
+        },
+      })
+    : await prisma.student.findMany({
+        where: {
+          OR: [
+            { name: { contains: searchTerm, mode: "insensitive" } },
+            { phone_number: { contains: searchTerm, mode: "insensitive" } },
+          ],
+        },
+        skip: (pageNumber - 1) * size,
+        take: size,
+        include: {
+          created_by: true,
+        },
+      });
 
   const changedNameStudent =
     students.length > 0

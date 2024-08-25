@@ -38,12 +38,13 @@ export const bookUpdate = async (data: BOOK_UPDATE_TYPE) => {
 };
 
 export const getBookWithQuery = async (
-  page: number = 1,
-  pageSize: number = 10,
-  search: string = ""
+  page: number | null = 1,
+  pageSize: number | null = 10,
+  search: string = "",
+  allSearch: boolean = false
 ) => {
   const res = await lmsClient.get(
-    `${BOOK}?page=${page}&pageSize=${pageSize}&search=${search}`
+    `${BOOK}?page=${page}&pageSize=${pageSize}&search=${search}&allSearch=${allSearch}`
   );
   return res?.data;
 };

@@ -23,11 +23,20 @@ import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ClassIcon from "@mui/icons-material/Class";
+import PostAddIcon from "@mui/icons-material/PostAdd";
 import { Colors } from "@/const/colors";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { LOGIN } from "@/const/routes";
+import {
+  ADMIN_DASHBOARD,
+  BOOK_LIST,
+  BORROW_LIST,
+  CATEGORY_LIST,
+  LOGIN,
+  STUDENT_LIST,
+  TEACHER_LIST,
+} from "@/const/routes";
 import { Modal } from "@/components/common";
 
 const drawerWidth = 240;
@@ -37,27 +46,32 @@ const DRAWER_LIST = [
   {
     title: "Dashboard",
     icon: <DashboardIcon sx={{ color: Colors.white }} />,
-    routeName: "/admin",
+    routeName: ADMIN_DASHBOARD,
   },
   {
     title: "Teacher",
     icon: <Face4Icon sx={{ color: Colors.white }} />,
-    routeName: "/admin/teacher/list",
+    routeName: TEACHER_LIST,
   },
   {
     title: "Student",
     icon: <Face3Icon sx={{ color: Colors.white }} />,
-    routeName: "/admin/student/list",
+    routeName: STUDENT_LIST,
   },
   {
     title: "Book",
     icon: <AutoStoriesIcon sx={{ color: Colors.white }} />,
-    routeName: "/admin/book/list",
+    routeName: BOOK_LIST,
   },
   {
     title: "Category",
     icon: <ClassIcon sx={{ color: Colors.white }} />,
-    routeName: "/admin/category/list",
+    routeName: CATEGORY_LIST,
+  },
+  {
+    title: "Borrow Book",
+    icon: <PostAddIcon sx={{ color: Colors.white }} />,
+    routeName: BORROW_LIST,
   },
   {
     title: "Logout",

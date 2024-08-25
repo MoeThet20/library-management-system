@@ -5,7 +5,9 @@ const BORROW = "borrow";
 
 export const borrowBookCreate = async (data: BORROW_BOOK_TYPE) => {
   const res = await lmsClient.post(BORROW, {
-    data,
+    books: data.books,
+    studentId: data.studentId,
+    teacherId: data.teacherId,
   });
   return res;
 };

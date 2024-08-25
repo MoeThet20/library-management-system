@@ -1,5 +1,5 @@
 export type BORROW_BOOK_TYPE = {
-  bookId: string;
+  books: Array<String>;
   studentId: string;
   teacherId: string;
 };

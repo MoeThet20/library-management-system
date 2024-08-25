@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { CONFLICT, SUCCESS } from "@/const/status";
-import { BOOK_CREATE_SERVICE_TYPE } from "@/initialValues/book";
 
 const prisma = new PrismaClient();
 
@@ -52,9 +51,12 @@ export async function GET(request: NextRequest) {
   const page: number = Number(searchParams.get("page")) || 1;
   const pageSize: number = Number(searchParams.get("pageSize")) || 10;
   const search: string = searchParams.get("search") || "";
+  const allSearch: string = searchParams.get("allSearch") || "false";
+
+  const isAllSearch = allSearch == "true";
 
   const pageNumber = page;
-  const size = pageSize;
+  const size = isAllSearch ? 50 : pageSize;
   const searchTerm = search;
 
   const totalBooks = await prisma.books.count({
@@ -105,6 +107,7 @@ export async function GET(request: NextRequest) {
           publicationDate: book.publication_date,
           amount: book.amount,
           place: book.place,
+          isBorrowAble: book.is_borrow_able,
           createdBy: book.created_by.name,
           createdDate: book.created_date,
         }))

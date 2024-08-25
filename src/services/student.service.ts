@@ -56,12 +56,13 @@ export const studentUpdate = async (data: STUDENT_UPDATE_TYPE) => {
 };
 
 export const getStudentWithQuery = async (
-  page: number = 1,
-  pageSize: number = 10,
-  search: string = ""
+  page: number | null = 1,
+  pageSize: number | null = 10,
+  search: string | null = "",
+  allSearch: boolean = false
 ) => {
   const res = await lmsClient.get(
-    `${STUDENT}?page=${page}&pageSize=${pageSize}&search=${search}`
+    `${STUDENT}?page=${page}&pageSize=${pageSize}&search=${search}&allSearch=${allSearch}`
   );
   return res?.data;
 };

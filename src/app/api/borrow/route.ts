@@ -1,21 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
-import { CONFLICT, SUCCESS } from "@/const/status";
+import { SUCCESS } from "@/const/status";
 
 const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   const data = await request.json();
-  const { bookId, studentId, teacherId } = data;
+  const { books, studentId, teacherId } = data;
 
-  const borrowBook = await prisma.borrowBook.create({
-    data: {
-      book_id: { connect: { id: bookId } },
-      borrowed_by: { connect: { id: studentId } },
-      created_by: { connect: { id: teacherId } },
-    },
+  const borrowData = books.map((bookId: string) => ({
+    booksId: bookId,
+    studentId: studentId,
+    teacherId: teacherId,
+  }));
+
+  const borrowBook = await prisma.borrowBook.createMany({
+    data: borrowData,
   });
+
+  for (const bookId of books) {
+    await prisma.books.update({
+      where: { id: bookId },
+      data: {
+        is_borrow_able: false,
+      },
+    });
+  }
 
   return NextResponse.json(borrowBook, SUCCESS);
 }
