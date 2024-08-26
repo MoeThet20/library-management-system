@@ -108,6 +108,9 @@ export async function GET(request: NextRequest) {
       borrowed_by: true,
       created_by: true,
     },
+    orderBy: {
+      created_date: "desc",
+    },
   });
 
   const changedNameBorrowBook =

@@ -23,7 +23,7 @@ import { ADMIN_DASHBOARD } from "@/const/routes";
 
 export default function SignIn() {
   const router = useRouter();
-  // useRedirectIfAuthenticated();
+  useRedirectIfAuthenticated();
 
   const handleSubmit = async (values: LOGIN_FORM_TYPE) => {
     const res = await signIn("credentials", {

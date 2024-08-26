@@ -78,6 +78,9 @@ export async function GET(request: NextRequest) {
       return_by: true,
       created_by: true,
     },
+    orderBy: {
+      created_date: "desc",
+    },
   });
 
   const changedNameReturnBook =

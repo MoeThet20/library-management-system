@@ -103,7 +103,7 @@ export default function ReturnList() {
               sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
               onClick={goToCreateBorrow}
             >
-              Create
+              Return
             </Button>
           </Box>
         </Box>

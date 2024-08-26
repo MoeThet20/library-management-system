@@ -59,6 +59,9 @@ export async function GET(request: NextRequest) {
     include: {
       created_by: true,
     },
+    orderBy: {
+      created_date: "desc",
+    },
   });
 
   const changedNameCategories =

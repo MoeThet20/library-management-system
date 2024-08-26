@@ -21,14 +21,18 @@ const onRequest = (
   //   const headers = {
   //     Authorization: "Bearer " + sessionStorage.getItem("jwt"),
   //   };
+
   let isDisableLoading = false;
+
   if (typeof window !== "undefined") {
     const currentUrl = window.location.href;
     const desireUrl = currentUrl.split(BASE_URL)[SECOND_INDEX];
     isDisableLoading = LOADING_DISABLE.includes(desireUrl);
   }
 
-  !isDisableLoading && store.dispatch(enableLoadingModal());
+  const isWarningApi = config.url?.includes("warning");
+
+  !isDisableLoading && !isWarningApi && store.dispatch(enableLoadingModal());
   return config;
 };
 

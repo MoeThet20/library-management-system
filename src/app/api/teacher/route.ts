@@ -77,6 +77,9 @@ export async function GET(request: NextRequest) {
     },
     skip: (pageNumber - 1) * size,
     take: size,
+    orderBy: {
+      created_date: "desc",
+    },
   });
 
   const changedNameTeachers =

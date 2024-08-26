@@ -105,7 +105,7 @@ export default function BorrowList() {
               sx={{ backgroundColor: Colors.primary_color, marginLeft: 4 }}
               onClick={goToCreateBorrow}
             >
-              Create
+              Borrow
             </Button>
           </Box>
         </Box>
