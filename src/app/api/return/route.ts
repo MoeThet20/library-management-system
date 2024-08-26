@@ -6,17 +6,41 @@ const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   const data = await request.json();
-  const { bookId, studentId, teacherId } = data;
+  const { books, borrowedIds, studentId, teacherId } = data;
 
-  const returnBook = await prisma.returnBook.create({
-    data: {
-      book_id: { connect: { id: bookId } },
-      return_by: { connect: { id: studentId } },
-      created_by: { connect: { id: teacherId } },
-    },
+  const returnData = books.map((bookId: string) => ({
+    booksId: bookId,
+    studentId: studentId,
+    teacherId: teacherId,
+  }));
+
+  const returnBookTransaction = await prisma.$transaction(async (prisma) => {
+    const returnBook = await prisma.returnBook.createMany({
+      data: returnData,
+    });
+
+    for (const bookId of books) {
+      await prisma.books.update({
+        where: { id: bookId },
+        data: {
+          is_borrow_able: true,
+        },
+      });
+    }
+
+    for (const borrowedId of borrowedIds) {
+      await prisma.borrowBook.update({
+        where: { id: borrowedId },
+        data: {
+          is_returned: true,
+        },
+      });
+    }
+
+    return returnBook;
   });
 
-  return NextResponse.json(returnBook, SUCCESS);
+  return NextResponse.json(returnBookTransaction, SUCCESS);
 }
 
 export async function GET(request: NextRequest) {

@@ -6,6 +6,7 @@ import {
   InternalAxiosRequestConfig,
 } from "axios";
 import { store } from "@/redux/store";
+import { disableLoadingModal } from "@/redux/features/loadingSlice";
 
 const onRequest = (
   config: InternalAxiosRequestConfig
@@ -22,10 +23,12 @@ const onRequestError = (error: AxiosError): Promise<AxiosError> => {
 };
 
 const onResponse = (response: AxiosResponse): AxiosResponse => {
+  store.dispatch(disableLoadingModal());
   return response;
 };
 
 const onResponseError = (error: AxiosError): Promise<AxiosError> => {
+  store.dispatch(disableLoadingModal());
   const isInternalError = error.response?.status === 500;
 
   const message = isInternalError

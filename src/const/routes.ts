@@ -20,6 +20,9 @@ export const CATEGORY_UPDATE = "/admin/category/update";
 export const BORROW_LIST = "/admin/borrow/list";
 export const BORROW_CREATE = "/admin/borrow/create";
 
+export const RETURN_LIST = "/admin/return/list";
+export const RETURN_CREATE = "/admin/return/create";
+
 export const LOGIN = "/login";
 export const REGISTER = "/register";
 

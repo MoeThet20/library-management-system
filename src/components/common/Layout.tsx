@@ -24,6 +24,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ClassIcon from "@mui/icons-material/Class";
 import PostAddIcon from "@mui/icons-material/PostAdd";
+import ReplyAllIcon from "@mui/icons-material/ReplyAll";
 import { Colors } from "@/const/colors";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
@@ -34,10 +35,11 @@ import {
   BORROW_LIST,
   CATEGORY_LIST,
   LOGIN,
+  RETURN_LIST,
   STUDENT_LIST,
   TEACHER_LIST,
 } from "@/const/routes";
-import { Modal } from "@/components/common";
+import { LoadingModal, Modal } from "@/components/common";
 
 const drawerWidth = 240;
 const LOGOUT = "logout";
@@ -72,6 +74,11 @@ const DRAWER_LIST = [
     title: "Borrow Book",
     icon: <PostAddIcon sx={{ color: Colors.white }} />,
     routeName: BORROW_LIST,
+  },
+  {
+    title: "Return Book",
+    icon: <ReplyAllIcon sx={{ color: Colors.white }} />,
+    routeName: RETURN_LIST,
   },
   {
     title: "Logout",
@@ -305,6 +312,7 @@ const Page: React.FC<AppProps> = ({ children }) => {
         {children}
       </Box>
       <Modal />
+      <LoadingModal />
     </Box>
   );
 };

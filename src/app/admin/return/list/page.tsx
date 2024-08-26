@@ -17,7 +17,7 @@ import {
 import { DatePicker, Layout, Loading } from "@/components/common";
 import { Colors } from "@/const/colors";
 import { useRouter } from "next/navigation";
-import { BORROW_CREATE } from "@/const/routes";
+import { RETURN_CREATE } from "@/const/routes";
 import { convertDateString, DAY_MONTH_YEAR_HOUR_MINUTE } from "@/const";
 import { getBorrowBookWithQuery } from "@/services/borrow.service";
 import { Field, Form, Formik } from "formik";
@@ -29,8 +29,6 @@ type ListType = {
   title: string;
   studentName: string;
   teacherName: string;
-  studentId: string;
-  bookId: string;
   createdDate: string;
 };
 
@@ -44,7 +42,7 @@ type DataType = {
 const ZERO = 0;
 const ONE = 1;
 
-export default function BorrowList() {
+export default function ReturnList() {
   const router = useRouter();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -60,7 +58,7 @@ export default function BorrowList() {
     setData(res);
   };
 
-  const goToCreateBorrow = () => router.push(BORROW_CREATE);
+  const goToCreateBorrow = () => router.push(RETURN_CREATE);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -97,7 +95,7 @@ export default function BorrowList() {
           mb={3}
         >
           <Typography component="h1" variant="h5">
-            Borrow List
+            Return List
           </Typography>
           <Box display="flex">
             <Button
@@ -144,9 +142,9 @@ export default function BorrowList() {
               <TableRow>
                 <TableCell>No</TableCell>
                 <TableCell>Book Title</TableCell>
-                <TableCell>Borrow Student</TableCell>
-                <TableCell>Borrow By</TableCell>
-                <TableCell align="right">Borrowed Date</TableCell>
+                <TableCell>Return Student</TableCell>
+                <TableCell>Received By</TableCell>
+                <TableCell align="right">Return Date</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -159,7 +157,7 @@ export default function BorrowList() {
               ) : data?.list.length === ZERO ? (
                 <TableRow>
                   <TableCell colSpan={5} align="center">
-                    There is no borrow book.
+                    There is no return book.
                   </TableCell>
                 </TableRow>
               ) : (

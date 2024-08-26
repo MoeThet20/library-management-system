@@ -79,6 +79,7 @@ model BorrowBook {
   book_id      Books    @relation(fields: [booksId], references: [id])
   borrowed_by  Student  @relation(fields: [studentId], references: [id])
   created_by   Teacher  @relation(fields: [teacherId], references: [id])
+  is_returned  Boolean  @default(false)
   created_date DateTime @default(now())
   updated_date DateTime @default(now())
   booksId      String   @db.ObjectId

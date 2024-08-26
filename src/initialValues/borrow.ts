@@ -18,7 +18,8 @@ export const BORROW_BOOK_SEARCH_INITIAL_VALUE = {
 };
 
 export type RETURN_BOOK_TYPE = {
-  bookId: string;
+  books: Array<String>;
+  borrowedIds: Array<String>;
   studentId: string;
   teacherId: string;
 };

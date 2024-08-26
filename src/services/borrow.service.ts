@@ -2,10 +2,13 @@ import { BORROW_BOOK_TYPE } from "@/initialValues/borrow";
 import { lmsClient } from "./api";
 import { convertDateString, YEAR_MONTH_DAY } from "@/const";
 import dayjs from "dayjs";
+import { enableLoadingModal } from "@/redux/features/loadingSlice";
+import { store } from "@/redux/store";
 
 const BORROW = "borrow";
 
 export const borrowBookCreate = async (data: BORROW_BOOK_TYPE) => {
+  store.dispatch(enableLoadingModal());
   const res = await lmsClient.post(BORROW, {
     books: data.books,
     studentId: data.studentId,
@@ -26,5 +29,10 @@ export const getBorrowBookWithQuery = async (
   const res = await lmsClient.get(
     `${BORROW}?page=${page}&pageSize=${pageSize}&startDate=${convertedStartDate}&endDate=${convertedEndDate}`
   );
+  return res?.data;
+};
+
+export const getAllBorrowBook = async () => {
+  const res = await lmsClient.get(`${BORROW}`);
   return res?.data;
 };
