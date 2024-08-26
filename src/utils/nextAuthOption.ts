@@ -12,14 +12,29 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { type: "text", placeholder: "test@test.com" },
         password: { type: "text", placeholder: "password" },
+        rfid: { type: "text", placeholder: "RFID" },
       },
       //@ts-ignore
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) return null;
-
-        const { email, password } = credentials;
-
         try {
+          if (credentials?.rfid) {
+            const user = await prisma.teacher.findUnique({
+              where: { rfid: credentials?.rfid },
+            });
+
+            return {
+              id: user?.id,
+              name: user?.name,
+              email: user?.email,
+              occupation: user?.occupation,
+              role: user?.role,
+            };
+          }
+
+          if (!credentials?.email || !credentials.password) return null;
+
+          const { email, password } = credentials;
+
           const user = await prisma.teacher.findUnique({
             where: { email: email },
           });
@@ -58,7 +73,7 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 1 * 24 * 60 * 60,
+    maxAge: 1 * 1 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {

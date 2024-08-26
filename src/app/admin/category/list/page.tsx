@@ -86,20 +86,18 @@ export default function CategoryList() {
 
   const handleDelete = async () => {
     if (!selectedCategory) return;
-    try {
-      const res = await categoryDelete(selectedCategory?.id);
-      if (!res) return;
-      setData((prev: any) => {
-        return {
-          ...prev,
-          list: prev?.list.filter(
-            (student: ListType) => student.id !== selectedCategory?.id
-          ),
-        };
-      });
-    } finally {
-      toggleConfirmModal();
-    }
+    toggleConfirmModal();
+
+    const res = await categoryDelete(selectedCategory?.id);
+    if (!res) return;
+    setData((prev: any) => {
+      return {
+        ...prev,
+        list: prev?.list.filter(
+          (student: ListType) => student.id !== selectedCategory?.id
+        ),
+      };
+    });
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {

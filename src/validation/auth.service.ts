@@ -5,6 +5,11 @@ const loginValidationSchema = Yup.object({
   password: Yup.string().required("Password is required"),
 });
 
+const rfidLoginValidationSchema = Yup.object({
+  rfid: Yup.string().required("RFID is required"),
+});
+
 export default {
   loginValidationSchema,
+  rfidLoginValidationSchema,
 };

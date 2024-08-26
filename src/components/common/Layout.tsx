@@ -40,6 +40,7 @@ import {
   TEACHER_LIST,
 } from "@/const/routes";
 import { LoadingModal, Modal } from "@/components/common";
+import { useSession } from "next-auth/react";
 
 const drawerWidth = 240;
 const LOGOUT = "logout";
@@ -162,6 +163,7 @@ interface AppProps {
 const Page: React.FC<AppProps> = ({ children }) => {
   const theme = useTheme();
   const router = useRouter();
+  const { data } = useSession();
   const [open, setOpen] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState("");
 
@@ -199,9 +201,14 @@ const Page: React.FC<AppProps> = ({ children }) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Library Management System
-          </Typography>
+          <div className="flex justify-between w-full cursor-default">
+            <Typography variant="h6" noWrap component="div">
+              Library Management System
+            </Typography>
+            <Typography variant="h6" noWrap component="div">
+              {data?.user?.name}
+            </Typography>
+          </div>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -294,7 +301,7 @@ const Page: React.FC<AppProps> = ({ children }) => {
               padding: 12,
             }}
           >
-            <p style={{ color: Colors.white, fontSize: 12 }}>
+            <p style={{ color: Colors.white, fontSize: 14 }}>
               Developed by Khine Zaw Htet
             </p>
           </div>

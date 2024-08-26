@@ -87,22 +87,20 @@ export default function BookList() {
   const goToCreateBook = () => router.push(BOOK_CREATE);
 
   const handleDelete = async () => {
-    try {
-      if (!selectedBook) return;
-      const res = await bookDelete(selectedBook?.id);
-      if (!res) return;
+    if (!selectedBook) return;
+    toggleConfirmModal();
 
-      setData((prev: any) => {
-        return {
-          ...prev,
-          list: prev?.list.filter(
-            (book: ListType) => book.id !== selectedBook?.id
-          ),
-        };
-      });
-    } finally {
-      toggleConfirmModal();
-    }
+    const res = await bookDelete(selectedBook?.id);
+    if (!res) return;
+
+    setData((prev: any) => {
+      return {
+        ...prev,
+        list: prev?.list.filter(
+          (book: ListType) => book.id !== selectedBook?.id
+        ),
+      };
+    });
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
