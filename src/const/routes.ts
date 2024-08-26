@@ -27,3 +27,12 @@ export const LOGIN = "/login";
 export const REGISTER = "/register";
 
 export const PUBLIC_ROUTE = [LOGIN];
+
+export const LOADING_DISABLE = [
+  TEACHER_LIST,
+  STUDENT_LIST,
+  BOOK_LIST,
+  CATEGORY_LIST,
+  BORROW_LIST,
+  RETURN_LIST,
+];

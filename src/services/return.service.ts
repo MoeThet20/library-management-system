@@ -1,17 +1,13 @@
 import { RETURN_BOOK_TYPE } from "@/initialValues/borrow";
 import { lmsClient } from "./api";
 import { store } from "@/redux/store";
-import {
-  disableLoadingModal,
-  enableLoadingModal,
-} from "@/redux/features/loadingSlice";
+
 import { convertDateString, YEAR_MONTH_DAY } from "@/const";
 import dayjs from "dayjs";
 
 const RETURN = "return";
 
 export const returnBookCreate = async (data: RETURN_BOOK_TYPE) => {
-  store.dispatch(enableLoadingModal());
   const res = await lmsClient.post(RETURN, {
     books: data.books,
     borrowedIds: data.borrowedIds,
