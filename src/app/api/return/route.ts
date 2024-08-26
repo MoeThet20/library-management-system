@@ -49,25 +49,56 @@ export async function GET(request: NextRequest) {
 
   const page: number = Number(searchParams.get("page")) || 1;
   const pageSize: number = Number(searchParams.get("pageSize")) || 10;
-  const search: string = searchParams.get("search") || "";
+  const startDate: string = searchParams.get("startDate") || "";
+  const endDate: string = searchParams.get("endDate") || "";
 
   const pageNumber = page;
   const size = pageSize;
-  const searchTerm = search;
-  //TODO need to apply by date range and need to populate the data
-  const totalReturnBook = await prisma.returnBook.count();
 
-  const returnBook = await prisma.returnBook.findMany({
-    skip: (pageNumber - 1) * size,
-    take: size,
+  const totalReturnBook = await prisma.returnBook.count({
+    where: {
+      created_date: {
+        gte: new Date(startDate),
+        lte: new Date(endDate),
+      },
+    },
   });
 
-  const borrowBookRes = {
+  const returnBook = await prisma.returnBook.findMany({
+    where: {
+      created_date: {
+        gte: new Date(startDate),
+        lte: new Date(endDate),
+      },
+    },
+    skip: (pageNumber - 1) * size,
+    take: size,
+    include: {
+      book_id: true,
+      return_by: true,
+      created_by: true,
+    },
+  });
+
+  const changedNameReturnBook =
+    returnBook.length > 0
+      ? returnBook.map((borrow) => ({
+          id: borrow.id,
+          title: borrow.book_id.title,
+          studentName: borrow.return_by.name,
+          teacherName: borrow.created_by.name,
+          studentId: borrow.return_by.id,
+          bookId: borrow.book_id.id,
+          createdDate: borrow.created_date,
+        }))
+      : [];
+
+  const returnBookRes = {
     total: totalReturnBook,
     page: pageNumber,
     pageSize: size,
-    list: returnBook,
+    list: changedNameReturnBook,
   };
 
-  return NextResponse.json(borrowBookRes, SUCCESS);
+  return NextResponse.json(returnBookRes, SUCCESS);
 }

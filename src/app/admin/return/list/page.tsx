@@ -19,7 +19,7 @@ import { Colors } from "@/const/colors";
 import { useRouter } from "next/navigation";
 import { RETURN_CREATE } from "@/const/routes";
 import { convertDateString, DAY_MONTH_YEAR_HOUR_MINUTE } from "@/const";
-import { getBorrowBookWithQuery } from "@/services/borrow.service";
+import { getReturnBookWithQuery } from "@/services/return.service";
 import { Field, Form, Formik } from "formik";
 import { BORROW_BOOK_SEARCH_INITIAL_VALUE } from "@/initialValues/borrow";
 import validation from "@/validation/borrow.service";
@@ -54,7 +54,7 @@ export default function ReturnList() {
   }, [page, rowsPerPage]);
 
   const getBorrowData = async () => {
-    const res = await getBorrowBookWithQuery(page + 1, rowsPerPage);
+    const res = await getReturnBookWithQuery(page + 1, rowsPerPage);
     setData(res);
   };
 
@@ -74,7 +74,7 @@ export default function ReturnList() {
   const handleSubmit = async (values: { startDate: Date; endDate: Date }) => {
     setData(null);
 
-    const res = await getBorrowBookWithQuery(
+    const res = await getReturnBookWithQuery(
       1,
       rowsPerPage,
       values.startDate,
@@ -109,7 +109,7 @@ export default function ReturnList() {
         </Box>
         <Formik
           initialValues={BORROW_BOOK_SEARCH_INITIAL_VALUE}
-          validationSchema={validation.borrowSearchValidationSchema}
+          validationSchema={validation.borrowReturnSearchValidationSchema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (

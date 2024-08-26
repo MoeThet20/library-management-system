@@ -111,7 +111,7 @@ export default function BorrowList() {
         </Box>
         <Formik
           initialValues={BORROW_BOOK_SEARCH_INITIAL_VALUE}
-          validationSchema={validation.borrowSearchValidationSchema}
+          validationSchema={validation.borrowReturnSearchValidationSchema}
           onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (

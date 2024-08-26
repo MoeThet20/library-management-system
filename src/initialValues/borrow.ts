@@ -14,7 +14,7 @@ export type BORROW_BOOK_SEARCH_TYPE = {
 
 export const BORROW_BOOK_SEARCH_INITIAL_VALUE = {
   startDate: new Date(dayjs().subtract(1, "day").format(YEAR_MONTH_DAY)),
-  endDate: new Date(),
+  endDate: new Date(dayjs().add(1, "day").format(YEAR_MONTH_DAY)),
 };
 
 export type RETURN_BOOK_TYPE = {

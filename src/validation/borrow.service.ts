@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 
-const borrowSearchValidationSchema = Yup.object({
+const borrowReturnSearchValidationSchema = Yup.object({
   startDate: Yup.date()
     .required("Start date is required")
     .nullable()
@@ -13,5 +13,5 @@ const borrowSearchValidationSchema = Yup.object({
 });
 
 export default {
-  borrowSearchValidationSchema,
+  borrowReturnSearchValidationSchema,
 };
