@@ -87,16 +87,22 @@ export default function BookList() {
   const goToCreateBook = () => router.push(BOOK_CREATE);
 
   const handleDelete = async () => {
-    setData((prev: any) => {
-      return {
-        ...prev,
-        list: prev?.list.filter(
-          (book: ListType) => book.id !== selectedBook?.id
-        ),
-      };
-    });
-    toggleConfirmModal();
-    selectedBook && (await bookDelete(selectedBook?.id));
+    try {
+      if (!selectedBook) return;
+      const res = await bookDelete(selectedBook?.id);
+      if (!res) return;
+
+      setData((prev: any) => {
+        return {
+          ...prev,
+          list: prev?.list.filter(
+            (book: ListType) => book.id !== selectedBook?.id
+          ),
+        };
+      });
+    } finally {
+      toggleConfirmModal();
+    }
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {

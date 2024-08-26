@@ -82,16 +82,23 @@ export default function StudentList() {
   const goToCreateStudent = () => router.push(STUDENT_CREATE);
 
   const handleDelete = async () => {
-    setData((prev: any) => {
-      return {
-        ...prev,
-        list: prev?.list.filter(
-          (student: ListType) => student.id !== selectedStudent?.id
-        ),
-      };
-    });
-    toggleConfirmModal();
-    selectedStudent && (await studentDelete(selectedStudent?.id));
+    try {
+      if (!selectedStudent) return;
+
+      const res = await studentDelete(selectedStudent?.id);
+      if (!res) return;
+
+      setData((prev: any) => {
+        return {
+          ...prev,
+          list: prev?.list.filter(
+            (student: ListType) => student.id !== selectedStudent?.id
+          ),
+        };
+      });
+    } finally {
+      toggleConfirmModal();
+    }
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {

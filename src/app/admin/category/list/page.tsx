@@ -85,16 +85,21 @@ export default function CategoryList() {
   const goToCreateStudent = () => router.push(CATEGORY_CREATE);
 
   const handleDelete = async () => {
-    setData((prev: any) => {
-      return {
-        ...prev,
-        list: prev?.list.filter(
-          (student: ListType) => student.id !== selectedCategory?.id
-        ),
-      };
-    });
-    toggleConfirmModal();
-    selectedCategory && (await categoryDelete(selectedCategory?.id));
+    if (!selectedCategory) return;
+    try {
+      const res = await categoryDelete(selectedCategory?.id);
+      if (!res) return;
+      setData((prev: any) => {
+        return {
+          ...prev,
+          list: prev?.list.filter(
+            (student: ListType) => student.id !== selectedCategory?.id
+          ),
+        };
+      });
+    } finally {
+      toggleConfirmModal();
+    }
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {

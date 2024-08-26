@@ -38,7 +38,7 @@ model Student {
   initial_year String          @unique
   current_year CurrentYearType
   phone_number String
-  created_by   Teacher         @relation(fields: [teacherId], references: [id])
+  created_by   Teacher         @relation(fields: [teacherId], references: [id], onDelete: Restrict)
   teacherId    String          @db.ObjectId
   created_date DateTime        @default(now())
   updated_date DateTime        @default(now())
@@ -49,7 +49,7 @@ model Student {
 model Category {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   category     String   @unique
-  created_by   Teacher  @relation(fields: [teacherId], references: [id])
+  created_by   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Restrict)
   created_date DateTime @default(now())
   updated_date DateTime @default(now())
   teacherId    String   @db.ObjectId
@@ -60,13 +60,13 @@ model Books {
   title            String
   author           String
   isbn             String       @unique
-  categories       String[]
+  categories       String[] 
   description      String
   publication_date DateTime
   amount           Int
   place            String
   is_borrow_able   Boolean      @default(true)
-  created_by       Teacher      @relation(fields: [teacherId], references: [id])
+  created_by       Teacher      @relation(fields: [teacherId], references: [id], onDelete: Restrict)
   created_date     DateTime     @default(now())
   updated_date     DateTime     @default(now())
   teacherId        String       @db.ObjectId
@@ -76,9 +76,9 @@ model Books {
 
 model BorrowBook {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  book_id      Books    @relation(fields: [booksId], references: [id])
-  borrowed_by  Student  @relation(fields: [studentId], references: [id])
-  created_by   Teacher  @relation(fields: [teacherId], references: [id])
+  book_id      Books    @relation(fields: [booksId], references: [id], onDelete: Restrict)
+  borrowed_by  Student  @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  created_by   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Restrict)
   is_returned  Boolean  @default(false)
   created_date DateTime @default(now())
   updated_date DateTime @default(now())
@@ -89,9 +89,9 @@ model BorrowBook {
 
 model ReturnBook {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  book_id      Books    @relation(fields: [booksId], references: [id])
-  return_by    Student  @relation(fields: [studentId], references: [id])
-  created_by   Teacher  @relation(fields: [teacherId], references: [id])
+  book_id      Books    @relation(fields: [booksId], references: [id], onDelete: Restrict)
+  return_by    Student  @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  created_by   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Restrict)
   created_date DateTime @default(now())
   updated_date DateTime @default(now())
   booksId      String   @db.ObjectId

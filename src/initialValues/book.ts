@@ -1,3 +1,6 @@
+import { YEAR_MONTH_DAY } from "@/const";
+import dayjs from "dayjs";
+
 export type BOOK_CREATE_TYPE = {
   title: string;
   author: string;
@@ -27,7 +30,7 @@ export const BOOK_CREATE_INITIAL_VALUES = {
   isbn: "",
   categories: [],
   description: "",
-  publicationDate: new Date(),
+  publicationDate: new Date(dayjs().subtract(1, "day").format(YEAR_MONTH_DAY)),
   amount: 1,
   place: "",
 };

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { CONFLICT, NO_CONTENT, SUCCESS } from "@/const/status";
+import { BAD_REQUEST, CONFLICT, NO_CONTENT, SUCCESS } from "@/const/status";
 
 type ParamsProps = { params: { id: string } };
 
@@ -39,6 +39,23 @@ export async function PATCH(request: NextRequest, { params }: ParamsProps) {
 
 export async function DELETE(request: NextRequest, { params }: ParamsProps) {
   const { id } = params;
+
+  const booksInCategory = await prisma.books.findMany({
+    where: {
+      categories: {
+        has: id,
+      },
+    },
+  });
+  if (booksInCategory.length > 0) {
+    return NextResponse.json(
+      {
+        error:
+          "Cannot delete category because there are books associated with it.",
+      },
+      BAD_REQUEST
+    );
+  }
 
   await prisma.category.delete({ where: { id: id } });
 

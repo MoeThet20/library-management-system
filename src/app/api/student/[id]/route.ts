@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { CONFLICT, NO_CONTENT, SUCCESS } from "@/const/status";
+import { BAD_REQUEST, CONFLICT, NO_CONTENT, SUCCESS } from "@/const/status";
 
 type ParamsProps = { params: { id: string } };
 
@@ -42,9 +42,17 @@ export async function PATCH(request: NextRequest, { params }: ParamsProps) {
 }
 
 export async function DELETE(request: NextRequest, { params }: ParamsProps) {
-  const { id } = params;
+  try {
+    const { id } = params;
+    await prisma.student.delete({ where: { id: id } });
 
-  await prisma.student.delete({ where: { id: id } });
-
-  return NextResponse.json(NO_CONTENT);
+    return NextResponse.json(NO_CONTENT);
+  } catch (error: any) {
+    if (error.code === "P2014") {
+      return NextResponse.json(
+        { error: "Can not delete, there is associated data" },
+        BAD_REQUEST
+      );
+    }
+  }
 }

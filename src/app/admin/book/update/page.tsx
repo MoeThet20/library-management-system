@@ -132,11 +132,10 @@ export default function BookUpdate() {
                   multiple
                   options={categories}
                 />
-                <Field
-                  name="publicationDate"
-                  label="Publication Date"
-                  component={DatePicker}
-                />
+                <div className="my-3">
+                  <Typography variant="body2">Publication Date</Typography>
+                  <Field name="publicationDate" component={DatePicker} />
+                </div>
                 <TextInput name="amount" label="Number of book" type="number" />
                 <TextInput name="place" label="Place" multiline rows={3} />
                 <TextInput

@@ -94,16 +94,22 @@ export default function TeacherList() {
   };
 
   const handleDelete = async () => {
-    setData((prev: any) => {
-      return {
-        ...prev,
-        list: prev?.list.filter(
-          (teacher: ListType) => teacher.id !== selectedTeacher?.id
-        ),
-      };
-    });
-    toggleConfirmModal();
-    selectedTeacher && (await teacherDelete(selectedTeacher?.id));
+    try {
+      if (!selectedTeacher) return;
+      const res = await teacherDelete(selectedTeacher?.id);
+      if (!res) return;
+
+      setData((prev: any) => {
+        return {
+          ...prev,
+          list: prev?.list.filter(
+            (teacher: ListType) => teacher.id !== selectedTeacher?.id
+          ),
+        };
+      });
+    } finally {
+      toggleConfirmModal();
+    }
   };
 
   const handleTeacherById = (action: ACTION, data: ListType) => {
