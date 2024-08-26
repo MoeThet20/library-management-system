@@ -22,6 +22,8 @@ export const authOptions: NextAuthOptions = {
               where: { rfid: credentials?.rfid },
             });
 
+            if (!user) return null;
+
             return {
               id: user?.id,
               name: user?.name,
