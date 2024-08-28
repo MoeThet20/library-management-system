@@ -4,7 +4,6 @@ import "./globals.css";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { SessionWrapper } from "@/components";
 import { ReduxProvider } from "@/redux/provider";
-import { CopyRight } from "@/components";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +21,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link
+          rel="icon"
+          href="/icon?<generated>"
+          type="image/<generated>"
+          sizes="<generated>"
+        />
+        <link
+          rel="apple-touch-icon"
+          href="/apple-icon?<generated>"
+          type="image/<generated>"
+          sizes="<generated>"
+        />
+      </head>
       <body className={inter.className}>
         <ReduxProvider>
           <AppRouterCacheProvider>
