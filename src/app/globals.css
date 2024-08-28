@@ -103,3 +103,16 @@ a {
     color-scheme: dark;
   }
 }
+
+.w-50vw {
+  min-width: 50vw;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -1,197 +1,160 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
-import { SearchInput } from "@/components/common";
-import { Colors } from "@/const/colors";
-import { Box, InputAdornment, Modal, TextField } from "@mui/material";
-import { changeSectionValueFormat } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
-import * as React from "react";
-import SearchIcon from "@mui/icons-material/Search";
-import TuneIcon from "@mui/icons-material/Tune";
 
-const BOOKS = [
-  {
-    id: 1,
-    title:
-      "ERROR ANALYSIS FOR CANON IMAGERUNNER 3045 XEROX MACHINE LIBRARY MANAGEMENT SYSTEM",
-    author: "MG YE MANN AUNG",
-    category: "GRADUATION THESIS",
-  },
-  {
-    id: 1,
-    title: "LIBRARY MANAGEMENT SYSTEM",
-    author: "MG KHINE ZAW HTET",
-    category: "GRADUATION THESIS",
-  },
-];
+import { capitalize } from "@mui/material";
+import * as React from "react";
+import { debounce, ONE_SECOND } from "@/utils/helper";
+import { getBookWithQuery } from "@/services/book.service";
+import { LoadingModal } from "@/components/common";
+import { LearnMoreModal } from "@/components";
+
 type ListType = {
-  id: number;
+  id: string;
   title: string;
   author: string;
-  category: string;
+  isbn: string;
+  categories: Array<string>;
+  description: string;
+  publicationDate: Date;
+  amount: number;
+  place: string;
+  createdBy: string;
+  createdDate: string;
 };
+
+type DataType = {
+  total: number;
+  page: number;
+  pageSize: number;
+  list: Array<ListType>;
+};
+
+const PAGE = 1;
+const PAGE_SIZE = 1000;
+const ONE = 1;
+
 export default function BookSearchList() {
   const [searchValue, setSearchValue] = React.useState("");
-  const [books, setBooks] = React.useState<ListType[] | null>(null);
+  const [books, setBooks] = React.useState<DataType | null>(null);
   const [selectedBook, setSelectedBook] = React.useState<ListType | null>(null);
-  const [open, setOpen] = React.useState(false);
+  const [isOpenModal, setIsOpenModal] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    getBooks();
+  }, []);
+
+  const getBooks = async () => {
+    const res = await getBookWithQuery(PAGE, PAGE_SIZE);
+    setBooks(res);
+  };
+
+  const fetchResults = React.useCallback(
+    debounce(async (query: any) => {
+      try {
+        setBooks(null);
+        const res = await getBookWithQuery(PAGE, PAGE_SIZE, query);
+        setBooks(res);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }, ONE_SECOND),
+    []
+  );
+
   const handleSearchChange = (value: string) => {
     setSearchValue(value);
+    fetchResults(value);
   };
-  const handleSearch = () => {
-    setBooks(BOOKS);
+
+  const toggleModal = () => setIsOpenModal((prev) => !prev);
+
+  const handleLearnMore = (book: ListType) => {
+    setSelectedBook(book);
+    toggleModal();
   };
-  const handleClose = () => {
-    setOpen(false);
-  };
+
   return (
-    <div className="flex bg-red-50 justify-center w-full h-screen">
+    <div className="flex flex-col items-center w-full h-screen">
       <img
         src="/background_library.jpg"
-        className="w-full h-screen absolute z-0"
+        className="absolute z-0 w-full h-screen"
         alt=""
       />
-      <div
-        className="flex-col flex z-10 items-center"
-        style={{ height: "200vh" }}
-      >
-        <h1 className="text-white m-20 text-4xl">Library Management System</h1>
-
-        <p className="mb-4 ease-linear">
-          Your perfect book is just a search away...
-        </p>
-        {/* <div className="flex-row"> */}
-        <TextField
-          label="Search"
-          variant="outlined"
-          value={searchValue}
-          onChange={(event) => handleSearchChange(event.target.value)}
-          onFocus={() => setBooks(null)}
-          size="small"
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: Colors.primary_color,
-                borderWidth: 2, // Default border color
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: Colors.primary_color, // Border color when focused
-              },
-              color: Colors.primary_color,
-              backgroundColor: Colors.white,
-              borderRadius: 12,
-              opacity: 50,
-              width: 500,
-            },
-          }}
-          InputProps={{
-            endAdornment: (
-              <div onClick={handleSearch}>
-                <InputAdornment position="end" className="cursor-pointer">
-                  <SearchIcon sx={{ color: Colors.primary_color }} />
-                </InputAdornment>
-              </div>
-            ),
-          }}
-        />
-        {/* <button
-            onClick={() => setOpen(true)}
-            className="bg-white px-4 rounded-md h-10 ml-2"
-          >
-            <TuneIcon sx={{ color: Colors.primary_color }} />
-          </button>
-        </div> */}
-        <div className=" flex-col border-green-50">
-          {books?.map((book) => (
-            <div className="flex-col bg-white p-4 mt-2 max-w-lg rounded-xl text-black">
-              <h2 className="text-primary font-bold">{book.title}</h2>
-              <p className="mt-1">Author: {book.author}</p>
-              <p className="mt-1">Category: {book.category}</p>
-              <button
-                onClick={() => {
-                  setSelectedBook(book);
-                  setOpen(true);
-                }}
-                className="bg-primary mt-2 px-2 py-1 rounded-md text-white"
-              >
-                Learn more
-              </button>
-            </div>
-          ))}
+      <div className="z-20 flex flex-col items-center mt-5">
+        <h1 className="m-5 text-4xl text-white">Library Management System</h1>
+        <div className="relative w-full px-4">
+          <div className="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-7">
+            <svg
+              className="w-4 h-4 text-gray-500 dark:text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+              />
+            </svg>
+          </div>
+          <input
+            type="search"
+            id="default-search"
+            className="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg ps-10 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+            placeholder="Search......."
+            value={searchValue}
+            onChange={(event) => handleSearchChange(event.target.value)}
+          />
         </div>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="parent-modal-title"
-          aria-describedby="parent-modal-description"
-          className="flex justify-center items-center"
-        >
-          <Box
-            sx={{
-              width: "70%",
-              backgroundColor: Colors.white,
-              padding: 10,
-              borderRadius: 4,
-              overflowY: 'scroll',
-              height: '80%'
-            }}
-          >
-            <h2 className="text-primary font-bold text-center">
-              {selectedBook?.title}
-            </h2>
-            <div className="flex">
-              <p className="mt-4 text-black w-1/6">Author: </p>
-              <span className="mt-4 text-black">{selectedBook?.author}</span>
-            </div>
-            <div className="flex">
-              <p className="mt-4 text-black w-1/6">Category: </p>
-              <span className="mt-4 text-black">{selectedBook?.category}</span>
-            </div>
-            <div className="flex">
-              <p className="mt-4 text-black w-1/6">ISBN: </p>
-              <span className="mt-4 text-black">R-0005</span>
-            </div>
-            <div className="flex">
-              <p className="mt-4 text-black w-1/6">Publication date: </p>
-              <span className="mt-4 text-black">July, 2018</span>
-            </div>
-            <div className="flex">
-              <p className="mt-4 text-black w-1/6">Place: </p>
-              <span className="mt-4 text-black">First Stage</span>
-            </div>
-            <div className="flex">
-              <p className="mt-4 text-black w-1/6">Created date: </p>
-              <span className="mt-4 text-black">24/8/2024</span>
-            </div>
-            <div className="flex">
-              <p className="mt-4 text-black w-1/6">Can borrow: </p>
-              <span className="mt-4 text-black">Yes</span>
-            </div>
-            <div className="flex">
-              <p className="mt-4 text-black w-1/6">Description: </p>
-              <span className="mt-4 text-black">A picture-book biography of Betty Robinson, who "at only sixteen
-                years old ... became the first female gold medalist in track and
-                field in the 1928 Olympics and an overnight sensation. She was
-                set for gold again and had her eyes on the 1932 Olympics. Her
-                plans changed forever when a horrible plane crash left her in a
-                wheelchair, with one leg shorter than the other. But Betty
-                didn't let that stop her. In less than five years, she relearned
-                how to stand, to walk, and finally to run again and try to taste
-                gold once more in the 1936 Olympics in Berlin"--Publisher
-                marketing." -- (Source of summary not specified)
-              </span>
-            </div>
-            <div className="flex w-full">
-              {/* <button className="text-primary">Reset</button>
-              <button className="bg-primary ml-auto px-2 py-1 rounded-md text-white">Search</button> */}
-              <button
-                onClick={handleClose}
-                className="border-primary border ml-auto px-2 py-1 rounded-md text-primary"
-              >
-                Close
-              </button>
-            </div>
-          </Box>
-        </Modal>
       </div>
+
+      <div className="z-10 flex flex-col items-center p-5 mt-5 overflow-auto no-scrollbar">
+        <div className="flex-col w-full border-green-50">
+          {books &&
+            books?.list.length > 0 &&
+            books?.list?.map((book, index) => (
+              <div
+                className="flex-col p-5 my-5 text-black bg-white rounded-xl w-50vw"
+                key={index}
+              >
+                <h2 className="font-bold text-primary">{book.title}</h2>
+                <p className="mt-1">
+                  Author:{" "}
+                  <span className="font-bold">{book.author || "-"}</span>
+                </p>
+                <p className="mt-1">
+                  Category:{" "}
+                  {book.categories.map(
+                    (category, index) =>
+                      `${capitalize(category)}${
+                        book.categories.length > ONE &&
+                        book.categories.length !== index + 1
+                          ? ","
+                          : ""
+                      }`
+                  )}
+                </p>
+                <div className="flex justify-end w-full">
+                  <button
+                    className="px-5 py-2 mt-3 text-white rounded-md bg-primary"
+                    onClick={() => handleLearnMore(book)}
+                  >
+                    Learn more
+                  </button>
+                </div>
+              </div>
+            ))}
+        </div>
+      </div>
+      <LearnMoreModal
+        isOpen={isOpenModal}
+        handleClose={toggleModal}
+        selectedBook={selectedBook}
+      />
+      <LoadingModal />
     </div>
   );
 }
