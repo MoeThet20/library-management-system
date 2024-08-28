@@ -1,12 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { capitalize } from "@mui/material";
+import { Button, capitalize } from "@mui/material";
 import * as React from "react";
 import { debounce, ONE_SECOND } from "@/utils/helper";
 import { getBookWithQuery } from "@/services/book.service";
 import { LoadingModal } from "@/components/common";
 import { LearnMoreModal } from "@/components";
+import { useRouter } from "next/navigation";
+import { LOGIN } from "@/const/routes";
 
 type ListType = {
   id: string;
@@ -34,6 +36,7 @@ const PAGE_SIZE = 1000;
 const ONE = 1;
 
 export default function BookSearchList() {
+  const router = useRouter();
   const [searchValue, setSearchValue] = React.useState("");
   const [books, setBooks] = React.useState<DataType | null>(null);
   const [selectedBook, setSelectedBook] = React.useState<ListType | null>(null);
@@ -73,6 +76,8 @@ export default function BookSearchList() {
     toggleModal();
   };
 
+  const goToLogin = () => router.push(LOGIN);
+
   return (
     <div className="flex flex-col items-center w-full h-screen">
       <img
@@ -108,6 +113,11 @@ export default function BookSearchList() {
             value={searchValue}
             onChange={(event) => handleSearchChange(event.target.value)}
           />
+        </div>
+        <div className="absolute right-6">
+          <Button variant="contained" onClick={goToLogin}>
+            Go To Login
+          </Button>
         </div>
       </div>
 
