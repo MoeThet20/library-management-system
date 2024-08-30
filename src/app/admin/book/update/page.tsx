@@ -8,18 +8,16 @@ import {
   Container,
   capitalize,
 } from "@mui/material";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 
-import { Select, TextInput, Layout } from "@/components/common";
+import { Select, TextInput, Layout, DateRange } from "@/components/common";
 import { Colors } from "@/const/colors";
-import { YEARS } from "@/const";
 import {
   BOOK_UPDATE_INITIAL_VALUES,
   BOOK_UPDATE_TYPE,
 } from "@/initialValues/book";
 import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/hook/ReduxHooks";
-import { DatePicker } from "@/components/common";
 import { getCategories } from "@/services/category.service";
 import { BOOK_LIST } from "@/const/routes";
 import validation from "@/validation/book.service";
@@ -38,6 +36,8 @@ type categoryType = {
 };
 
 const ZERO = 0;
+const FROM_YEAR = 0;
+const TO_YEAR = 1;
 
 export default function BookUpdate() {
   const router = useRouter();
@@ -62,6 +62,8 @@ export default function BookUpdate() {
           }));
     setCategories(categories);
 
+    const getYear = selectedBook?.publicationDate.split("-") || [2023, 2024];
+
     const initialValues =
       categories.length > ZERO && selectedBook
         ? {
@@ -74,7 +76,8 @@ export default function BookUpdate() {
               selectedBook.categories
             ),
             description: selectedBook.description,
-            publicationDate: selectedBook.publicationDate,
+            publicationDateFromDate: new Date(getYear[FROM_YEAR]),
+            publicationDateToDate: new Date(getYear[TO_YEAR]),
             amount: selectedBook.amount,
             place: selectedBook.place,
             teacherId: selectedBook.teacherId,
@@ -132,10 +135,7 @@ export default function BookUpdate() {
                   multiple
                   options={categories}
                 />
-                <div className="my-3">
-                  <Typography variant="body2">Publication Date</Typography>
-                  <Field name="publicationDate" component={DatePicker} />
-                </div>
+                <DateRange name="publicationDate" label="Publication Date" />
                 <TextInput name="amount" label="Number of book" type="number" />
                 <TextInput name="place" label="Place" multiline rows={3} />
                 <TextInput

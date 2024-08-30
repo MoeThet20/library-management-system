@@ -10,7 +10,7 @@ type ListType = {
   isbn: string;
   categories: Array<string>;
   description: string;
-  publicationDate: Date;
+  publicationDate: string;
   amount: number;
   place: string;
   createdBy: string;

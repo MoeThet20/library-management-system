@@ -3,6 +3,7 @@ import {
   BOOK_UPDATE_TYPE,
 } from "@/initialValues/book";
 import { lmsClient } from "./api";
+import { setYearOnly } from "@/utils/helper";
 
 const BOOK = "book";
 
@@ -13,7 +14,9 @@ export const bookCreate = async (data: BOOK_CREATE_SERVICE_TYPE) => {
     isbn: data.isbn.toLocaleLowerCase().trim(),
     categories: data.categories,
     description: data.description,
-    publicationDate: data.publicationDate,
+    publicationDate: `${setYearOnly(
+      data.publicationDateFromDate
+    )}-${setYearOnly(data.publicationDateToDate)}`,
     amount: data.amount,
     place: data.place,
     teacherId: data.teacherId,
@@ -28,7 +31,9 @@ export const bookUpdate = async (data: BOOK_UPDATE_TYPE) => {
     isbn: data.isbn.toLocaleLowerCase().trim(),
     categories: data.categories,
     description: data.description,
-    publicationDate: data.publicationDate,
+    publicationDate: `${setYearOnly(
+      data.publicationDateFromDate
+    )}-${setYearOnly(data.publicationDateToDate)}`,
     amount: data.amount,
     place: data.place,
     teacherId: data.teacherId,

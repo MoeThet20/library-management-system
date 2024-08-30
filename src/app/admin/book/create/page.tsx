@@ -8,9 +8,9 @@ import {
   Container,
   capitalize,
 } from "@mui/material";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 
-import { Select, TextInput, Layout, DatePicker } from "@/components/common";
+import { Select, TextInput, Layout, DateRange } from "@/components/common";
 import { Colors } from "@/const/colors";
 import { getCategories } from "@/services/category.service";
 import validation from "@/validation/book.service";
@@ -99,10 +99,7 @@ export default function BookCreate() {
                   multiple
                   options={categories}
                 />
-                <div className="my-3">
-                  <Typography variant="body2">Publication Date</Typography>
-                  <Field name="publicationDate" component={DatePicker} />
-                </div>
+                <DateRange name="publicationDate" label="Publication Date" />
                 <TextInput name="amount" label="Number of book" type="number" />
                 <TextInput name="place" label="Place" multiline rows={3} />
                 <TextInput

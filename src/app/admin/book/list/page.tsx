@@ -44,7 +44,7 @@ type ListType = {
   isbn: string;
   categories: Array<string>;
   description: string;
-  publicationDate: Date;
+  publicationDate: string;
   amount: number;
   place: string;
   createdBy: string;
@@ -180,6 +180,7 @@ export default function BookList() {
                 <TableCell>Title</TableCell>
                 <TableCell>Author</TableCell>
                 <TableCell align="right">Categories</TableCell>
+                <TableCell align="right">Publication Date</TableCell>
                 <TableCell align="right">Created By</TableCell>
                 <TableCell align="right">Created Date</TableCell>
                 <TableCell />
@@ -218,6 +219,7 @@ export default function BookList() {
                           }`
                       )}
                     </TableCell>
+                    <TableCell align="right">{data.publicationDate}</TableCell>
                     <TableCell align="right">{data.createdBy}</TableCell>
                     <TableCell align="right">
                       {convertDateString(
