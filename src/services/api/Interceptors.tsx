@@ -12,8 +12,12 @@ import {
 } from "@/redux/features/loadingSlice";
 import { LOADING_DISABLE } from "@/const/routes";
 
-const BASE_URL = "http://localhost:3000";
 const SECOND_INDEX = 1;
+const isDev = process.env.NODE_ENV !== "production";
+
+const BASE_URL = isDev
+  ? "http://localhost:3000"
+  : "https://library-management-system-rosy.vercel.app";
 
 const onRequest = (
   config: InternalAxiosRequestConfig
