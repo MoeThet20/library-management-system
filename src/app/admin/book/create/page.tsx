@@ -10,7 +10,13 @@ import {
 } from "@mui/material";
 import { Formik, Form } from "formik";
 
-import { Select, TextInput, Layout, DateRange } from "@/components/common";
+import {
+  Select,
+  TextInput,
+  Layout,
+  DateRange,
+  Checkbox,
+} from "@/components/common";
 import { Colors } from "@/const/colors";
 import { getCategories } from "@/services/category.service";
 import validation from "@/validation/book.service";
@@ -60,7 +66,6 @@ export default function BookCreate() {
 
   const handleSubmit = async (values: BOOK_CREATE_TYPE) => {
     if (!data?.user?.id) return;
-
     const request = { ...values, teacherId: data?.user?.id };
     const res = await bookCreate(request);
     if (!res) return;
@@ -88,7 +93,7 @@ export default function BookCreate() {
             validationSchema={validation.bookValidationSchema}
             onSubmit={handleSubmit}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, values }) => (
               <Form>
                 <TextInput name="title" label="Title" />
                 <TextInput name="author" label="Author" />
@@ -99,7 +104,13 @@ export default function BookCreate() {
                   multiple
                   options={categories}
                 />
-                <DateRange name="publicationDate" label="Publication Date" />
+                <Checkbox
+                  name="disablePublication"
+                  label="Disable Publication Date"
+                />
+                {!values.disablePublication && (
+                  <DateRange name="publicationDate" label="Publication Date" />
+                )}
                 <TextInput name="amount" label="Number of book" type="number" />
                 <TextInput name="place" label="Place" multiline rows={3} />
                 <TextInput

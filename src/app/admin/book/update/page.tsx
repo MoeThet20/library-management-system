@@ -10,7 +10,13 @@ import {
 } from "@mui/material";
 import { Formik, Form } from "formik";
 
-import { Select, TextInput, Layout, DateRange } from "@/components/common";
+import {
+  Select,
+  TextInput,
+  Layout,
+  DateRange,
+  Checkbox,
+} from "@/components/common";
 import { Colors } from "@/const/colors";
 import {
   BOOK_UPDATE_INITIAL_VALUES,
@@ -76,6 +82,7 @@ export default function BookUpdate() {
               selectedBook.categories
             ),
             description: selectedBook.description,
+            disablePublication: selectedBook.publicationDate === "N/A",
             publicationDateFromDate: new Date(getYear[FROM_YEAR]),
             publicationDateToDate: new Date(getYear[TO_YEAR]),
             amount: selectedBook.amount,
@@ -124,7 +131,7 @@ export default function BookUpdate() {
             validationSchema={validation.bookValidationSchema}
             onSubmit={handleSubmit}
           >
-            {({ isSubmitting, dirty }) => (
+            {({ isSubmitting, dirty, values }) => (
               <Form>
                 <TextInput name="title" label="Title" />
                 <TextInput name="author" label="Author" />
@@ -135,7 +142,13 @@ export default function BookUpdate() {
                   multiple
                   options={categories}
                 />
-                <DateRange name="publicationDate" label="Publication Date" />
+                <Checkbox
+                  name="disablePublication"
+                  label="Disable Publication Date"
+                />
+                {!values.disablePublication && (
+                  <DateRange name="publicationDate" label="Publication Date" />
+                )}
                 <TextInput name="amount" label="Number of book" type="number" />
                 <TextInput name="place" label="Place" multiline rows={3} />
                 <TextInput

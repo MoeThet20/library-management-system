@@ -7,6 +7,7 @@ export type BOOK_CREATE_TYPE = {
   isbn: string;
   categories: Array<string>;
   description: string;
+  disablePublication: boolean;
   publicationDateFromDate: Date;
   publicationDateToDate: Date;
   amount: number;
@@ -19,6 +20,7 @@ export type BOOK_CREATE_SERVICE_TYPE = {
   isbn: string;
   categories: Array<string>;
   description: string;
+  disablePublication: boolean;
   publicationDateFromDate: Date;
   publicationDateToDate: Date;
   amount: number;
@@ -32,6 +34,7 @@ export const BOOK_CREATE_INITIAL_VALUES = {
   isbn: "",
   categories: [],
   description: "",
+  disablePublication: false,
   publicationDateFromDate: new Date(dayjs().subtract(1, "year").toString()),
   publicationDateToDate: new Date(),
   amount: 1,
@@ -45,6 +48,7 @@ export type BOOK_UPDATE_TYPE = {
   isbn: string;
   categories: Array<String>;
   description: string;
+  disablePublication: boolean;
   publicationDateFromDate: Date;
   publicationDateToDate: Date;
   amount: number;
@@ -58,6 +62,7 @@ export const BOOK_UPDATE_INITIAL_VALUES = {
   isbn: "",
   categories: [],
   description: "",
+  disablePublication: false,
   publicationDateFromDate: new Date(dayjs().subtract(1, "year").toString()),
   publicationDateToDate: new Date(),
   amount: 1,

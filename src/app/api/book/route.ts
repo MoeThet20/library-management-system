@@ -65,6 +65,7 @@ export async function GET(request: NextRequest) {
         { title: { contains: searchTerm, mode: "insensitive" } },
         { author: { contains: searchTerm, mode: "insensitive" } },
         { isbn: { contains: searchTerm, mode: "insensitive" } },
+        { publication_date: { contains: searchTerm, mode: "insensitive" } },
       ],
     },
   });
@@ -75,6 +76,7 @@ export async function GET(request: NextRequest) {
         { title: { contains: searchTerm, mode: "insensitive" } },
         { author: { contains: searchTerm, mode: "insensitive" } },
         { isbn: { contains: searchTerm, mode: "insensitive" } },
+        { publication_date: { contains: searchTerm, mode: "insensitive" } },
       ],
     },
     skip: (pageNumber - 1) * size,
