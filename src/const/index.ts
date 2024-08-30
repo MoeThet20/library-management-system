@@ -34,3 +34,5 @@ export const YEARS = [
 export const CONFIRM_MESSAGE = {
   DELETE: "Do you want to delete?",
 };
+
+export const WARNING_TIME = 3;

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { SUCCESS } from "@/const/status";
 import dayjs from "dayjs";
-import { YEAR_MONTH_DAY } from "@/const";
+import { WARNING_TIME, YEAR_MONTH_DAY } from "@/const";
 
 const prisma = new PrismaClient();
 
@@ -20,7 +20,9 @@ export async function GET(request: NextRequest) {
     where: {
       is_returned: false,
       created_date: {
-        lte: new Date(dayjs().subtract(3, "day").format(YEAR_MONTH_DAY)),
+        lte: new Date(
+          dayjs().subtract(WARNING_TIME, "day").format(YEAR_MONTH_DAY)
+        ),
       },
     },
     skip: (pageNumber - 1) * size,
@@ -31,7 +33,9 @@ export async function GET(request: NextRequest) {
     where: {
       is_returned: false,
       created_date: {
-        lte: new Date(dayjs().subtract(3, "day").format(YEAR_MONTH_DAY)),
+        lte: new Date(
+          dayjs().subtract(WARNING_TIME, "day").format(YEAR_MONTH_DAY)
+        ),
       },
     },
     skip: (pageNumber - 1) * size,
