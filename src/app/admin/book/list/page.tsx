@@ -68,7 +68,7 @@ export default function BookList() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [searchValue, setSearchValue] = React.useState("");
   const [data, setData] = useState<DataType | null>(null);
   const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
@@ -250,7 +250,7 @@ export default function BookList() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10]}
+          rowsPerPageOptions={[10, 25]}
           component="div"
           count={data?.total || 0}
           rowsPerPage={rowsPerPage}
