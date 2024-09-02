@@ -5,6 +5,21 @@ import { CONFLICT, SUCCESS } from "@/const/status";
 
 const prisma = new PrismaClient();
 
+type Book = {
+  id: string;
+  title: string;
+  author: string;
+  isbn: string;
+  categories: Array<string>;
+  description: string;
+  publication_date: string;
+  amount: number;
+  place: string;
+  is_borrow_able: boolean;
+  created_by: { name: string };
+  created_date: Date;
+};
+
 export async function POST(request: NextRequest) {
   const data = await request.json();
   const {
@@ -60,7 +75,7 @@ export async function GET(request: NextRequest) {
   const size = isAllSearch ? 50 : pageSize;
   const searchTerm = search;
   let totalBooks: number = 0;
-  let books: any = [];
+  let books: Array<Book> | null = [];
 
   if (category !== "all") {
     totalBooks = await prisma.books.count({
@@ -145,7 +160,7 @@ export async function GET(request: NextRequest) {
 
   const changedNameBooks =
     books.length > 0
-      ? books.map((book: any) => ({
+      ? books.map((book) => ({
           id: book.id,
           title: book.title,
           author: book.author,
