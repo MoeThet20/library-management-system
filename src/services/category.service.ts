@@ -8,7 +8,7 @@ const CATEGORY = "category";
 
 export const categoryCreate = async (data: CATEGORY_CREATE_SERVICE_TYPE) => {
   const res = await lmsClient.post(CATEGORY, {
-    category: data.category.toLocaleLowerCase().trim(),
+    category: data.category.trim(),
     teacherId: data.teacherId,
   });
   return res;
@@ -16,7 +16,7 @@ export const categoryCreate = async (data: CATEGORY_CREATE_SERVICE_TYPE) => {
 
 export const categoryUpdate = async (data: CATEGORY_UPDATE_TYPE) => {
   const res = await lmsClient.patch(`${CATEGORY}/${data.id}`, {
-    category: data.category.toLocaleLowerCase().trim(),
+    category: data.category.trim(),
   });
 
   return res;

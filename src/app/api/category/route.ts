@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
 
   const changedNameCategories =
     categories.length > 0
-      ? categories.map((category) => ({
+      ? categories.map((category: any) => ({
           id: category.id,
           category: category.category,
           createdBy: category.created_by.name,
