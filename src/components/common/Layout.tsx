@@ -184,6 +184,8 @@ const Page: React.FC<AppProps> = ({ children }) => {
     router.push(route);
   };
 
+  const goToDashboard = () => router.push(ADMIN_DASHBOARD);
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -214,13 +216,8 @@ const Page: React.FC<AppProps> = ({ children }) => {
       <Drawer variant="permanent" open={open}>
         <DrawerHeader sx={{ backgroundColor: Colors.primary_color }}>
           <div
-            style={{
-              display: "flex",
-              flex: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            className="flex flex-row items-center justify-center flex-1 cursor-pointer"
+            onClick={goToDashboard}
           >
             <Image src="/logo.jpg" width={50} height={50} alt="logo" />
             <div>
