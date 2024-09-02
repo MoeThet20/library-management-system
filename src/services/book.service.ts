@@ -58,5 +58,17 @@ export const getBookWithQuery = async (
   return res?.data;
 };
 
+export const getBookWithQueryMoreFilter = async (
+  page: number | null = 1,
+  pageSize: number | null = 10,
+  search: string = "",
+  category: string = "all"
+) => {
+  const res = await lmsClient.get(
+    `${BOOK}?page=${page}&pageSize=${pageSize}&search=${search}&category=${category}`
+  );
+  return res?.data;
+};
+
 export const bookDelete = async (id: string) =>
   await lmsClient.delete(`${BOOK}/${id}`);

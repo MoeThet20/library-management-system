@@ -51,6 +51,7 @@ export async function GET(request: NextRequest) {
   const page: number = Number(searchParams.get("page")) || 1;
   const pageSize: number = Number(searchParams.get("pageSize")) || 10;
   const search: string = searchParams.get("search") || "";
+  const category: string = searchParams.get("category") || "all";
   const allSearch: string = searchParams.get("allSearch") || "false";
 
   const isAllSearch = allSearch == "true";
@@ -58,36 +59,78 @@ export async function GET(request: NextRequest) {
   const pageNumber = page;
   const size = isAllSearch ? 50 : pageSize;
   const searchTerm = search;
+  let totalBooks: number = 0;
+  let books: any = [];
 
-  const totalBooks = await prisma.books.count({
-    where: {
-      OR: [
-        { title: { contains: searchTerm, mode: "insensitive" } },
-        { author: { contains: searchTerm, mode: "insensitive" } },
-        { isbn: { contains: searchTerm, mode: "insensitive" } },
-        { publication_date: { contains: searchTerm, mode: "insensitive" } },
-      ],
-    },
-  });
+  if (category !== "all") {
+    totalBooks = await prisma.books.count({
+      where: {
+        OR: [
+          { title: { contains: searchTerm, mode: "insensitive" } },
+          { author: { contains: searchTerm, mode: "insensitive" } },
+          { isbn: { contains: searchTerm, mode: "insensitive" } },
+          { publication_date: { contains: searchTerm, mode: "insensitive" } },
+        ],
+        categories: {
+          hasSome: [category],
+        },
+      },
+    });
 
-  const books = await prisma.books.findMany({
-    where: {
-      OR: [
-        { title: { contains: searchTerm, mode: "insensitive" } },
-        { author: { contains: searchTerm, mode: "insensitive" } },
-        { isbn: { contains: searchTerm, mode: "insensitive" } },
-        { publication_date: { contains: searchTerm, mode: "insensitive" } },
-      ],
-    },
-    skip: (pageNumber - 1) * size,
-    take: size,
-    include: {
-      created_by: true,
-    },
-    orderBy: {
-      created_date: "desc",
-    },
-  });
+    books = await prisma.books.findMany({
+      where: {
+        OR: [
+          { title: { contains: searchTerm, mode: "insensitive" } },
+          { author: { contains: searchTerm, mode: "insensitive" } },
+          { isbn: { contains: searchTerm, mode: "insensitive" } },
+          { publication_date: { contains: searchTerm, mode: "insensitive" } },
+        ],
+        categories: {
+          hasSome: [category],
+        },
+      },
+      skip: (pageNumber - 1) * size,
+      take: size,
+      include: {
+        created_by: true,
+      },
+      orderBy: {
+        created_date: "desc",
+      },
+    });
+  }
+
+  if (category === "all") {
+    totalBooks = await prisma.books.count({
+      where: {
+        OR: [
+          { title: { contains: searchTerm, mode: "insensitive" } },
+          { author: { contains: searchTerm, mode: "insensitive" } },
+          { isbn: { contains: searchTerm, mode: "insensitive" } },
+          { publication_date: { contains: searchTerm, mode: "insensitive" } },
+        ],
+      },
+    });
+
+    books = await prisma.books.findMany({
+      where: {
+        OR: [
+          { title: { contains: searchTerm, mode: "insensitive" } },
+          { author: { contains: searchTerm, mode: "insensitive" } },
+          { isbn: { contains: searchTerm, mode: "insensitive" } },
+          { publication_date: { contains: searchTerm, mode: "insensitive" } },
+        ],
+      },
+      skip: (pageNumber - 1) * size,
+      take: size,
+      include: {
+        created_by: true,
+      },
+      orderBy: {
+        created_date: "desc",
+      },
+    });
+  }
 
   const categories: Array<{
     id: String;
@@ -102,7 +145,7 @@ export async function GET(request: NextRequest) {
 
   const changedNameBooks =
     books.length > 0
-      ? books.map((book) => ({
+      ? books.map((book: any) => ({
           id: book.id,
           title: book.title,
           author: book.author,

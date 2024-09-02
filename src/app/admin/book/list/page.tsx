@@ -15,6 +15,10 @@ import {
   TableBody,
   TablePagination,
   capitalize,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import {
   ConfirmModal,
@@ -35,7 +39,11 @@ import {
 } from "@/const";
 import { updatedSelectedBook } from "@/redux/features/bookSlice";
 import { useAppDispatch } from "@/hook/ReduxHooks";
-import { getBookWithQuery, bookDelete } from "@/services/book.service";
+import {
+  getBookWithQueryMoreFilter,
+  bookDelete,
+} from "@/services/book.service";
+import { getCategories } from "@/services/category.service";
 
 type ListType = {
   id: string;
@@ -64,6 +72,21 @@ const ONE = 1;
 
 type ACTION = "DELETE" | "EDIT";
 
+type categoryType = {
+  value: string;
+  label: string;
+};
+
+type categoryListType = {
+  id: string;
+  category: string;
+  createdBy: string;
+  createdDate: string;
+};
+
+const ZERO = 0;
+const ALL = "all";
+
 export default function BookList() {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -73,14 +96,38 @@ export default function BookList() {
   const [data, setData] = useState<DataType | null>(null);
   const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
   const [selectedBook, setSelectedBook] = useState<ListType | null>(null);
+  const [category, setCategory] = useState(ALL);
+  const [categories, setCategories] = useState<Array<categoryType>>([]);
 
   useEffect(() => {
     setData(null);
     getBookData();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, category]);
+
+  useEffect(() => {
+    getCategoryData();
+  }, []);
+
+  const getCategoryData = async () => {
+    const categoriesRes: Array<categoryListType> = await getCategories();
+
+    const categories =
+      categoriesRes.length === ZERO
+        ? []
+        : categoriesRes.map((category) => ({
+            value: category.id,
+            label: capitalize(category.category),
+          }));
+    setCategories(categories);
+  };
 
   const getBookData = async () => {
-    const res = await getBookWithQuery(page + 1, rowsPerPage, searchValue);
+    const res = await getBookWithQueryMoreFilter(
+      page + 1,
+      rowsPerPage,
+      searchValue,
+      category
+    );
     setData(res);
   };
 
@@ -118,7 +165,12 @@ export default function BookList() {
     debounce(async (query: any) => {
       try {
         setData(null);
-        const res = await getBookWithQuery(page + 1, rowsPerPage, query);
+        const res = await getBookWithQueryMoreFilter(
+          page + 1,
+          rowsPerPage,
+          query,
+          category
+        );
         setData(res);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -144,6 +196,8 @@ export default function BookList() {
     router.push(BOOK_UPDATE);
   };
 
+  const handleCategoryChange = (category: string) => setCategory(category);
+
   return (
     <Layout>
       <Container component="main" maxWidth="lg">
@@ -167,10 +221,34 @@ export default function BookList() {
             </Button>
           </Box>
         </Box>
-        <SearchInput
-          value={searchValue}
-          onChange={(event) => handleSearchChange(event.target.value)}
-        />
+        <div className="flex items-center">
+          <SearchInput
+            value={searchValue}
+            onChange={(event) => handleSearchChange(event.target.value)}
+          />
+          <div className="ms-3 w-52">
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Categories</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={category}
+                onChange={(event) => handleCategoryChange(event.target.value)}
+                label="Categories"
+              >
+                <MenuItem value="all">
+                  <em>All</em>
+                </MenuItem>
+                {categories.length > 0 &&
+                  categories.map((category: categoryType, index: number) => (
+                    <MenuItem key={index} value={category.value}>
+                      {category.label}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </div>
+        </div>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
