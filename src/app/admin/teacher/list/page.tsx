@@ -175,7 +175,7 @@ export default function TeacherList() {
                 <TableCell>No</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell align="right">Phone No.</TableCell>
+                <TableCell align="right">Phone Number</TableCell>
                 <TableCell align="right">RFID</TableCell>
                 <TableCell align="right">Occupation</TableCell>
                 <TableCell align="right">Created Date</TableCell>
