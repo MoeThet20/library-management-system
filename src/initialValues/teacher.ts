@@ -33,3 +33,13 @@ export const TEACHER_UPDATE_INITIAL_VALUES = {
   phoneNumber: "",
   occupation: "",
 };
+
+export type TEACHER_CHANGE_PASSWORD_TYPE = {
+  password: string;
+  confirmPassword: string;
+};
+
+export const TEACHER_CHANGE_PASSWORD_INITIAL_VALUES = {
+  password: "",
+  confirmPassword: "",
+};

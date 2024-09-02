@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/hook/ReduxHooks";
 import { categoryUpdate } from "@/services/category.service";
 import { CATEGORY_LIST } from "@/const/routes";
+import validation from "@/validation/category.service";
 
 export default function CategoryUpdate() {
   const router = useRouter();
@@ -47,7 +48,11 @@ export default function CategoryUpdate() {
           <Typography component="h1" variant="h5">
             Category Update
           </Typography>
-          <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validation.categoryUpdateValidationSchema}
+            onSubmit={handleSubmit}
+          >
             {({ isSubmitting, dirty }) => (
               <Form>
                 <TextInput name="category" label="Category" />

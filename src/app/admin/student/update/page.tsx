@@ -16,6 +16,7 @@ import { useAppSelector } from "@/hook/ReduxHooks";
 import { useRouter } from "next/navigation";
 import { studentUpdate } from "@/services/student.service";
 import { STUDENT_LIST } from "@/const/routes";
+import validation from "@/validation/student.service";
 
 const FROM_YEAR = 0;
 const TO_YEAR = 1;
@@ -61,7 +62,11 @@ export default function StudentUpdate() {
           <Typography component="h1" variant="h5">
             Student Update
           </Typography>
-          <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validation.studentUpdateValidationSchema}
+            onSubmit={handleSubmit}
+          >
             {({ isSubmitting, dirty }) => (
               <Form>
                 <TextInput name="name" label="Name" />
