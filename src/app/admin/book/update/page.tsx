@@ -99,7 +99,7 @@ export default function BookUpdate() {
     ids: Array<String>
   ) => {
     return categories
-      .filter((item) => ids.includes(item.label.toLowerCase()))
+      .filter((item) => ids.includes(item.label))
       .map((item) => item.value);
   };
 
