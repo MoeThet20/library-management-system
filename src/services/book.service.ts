@@ -11,7 +11,7 @@ export const bookCreate = async (data: BOOK_CREATE_SERVICE_TYPE) => {
   const res = await lmsClient.post(BOOK, {
     title: data.title,
     author: data.author,
-    isbn: data.isbn.toLocaleLowerCase().trim(),
+    isbn: data.isbn.trim(),
     categories: data.categories,
     description: data.description,
     publicationDate: data.disablePublication
@@ -30,7 +30,7 @@ export const bookUpdate = async (data: BOOK_UPDATE_TYPE) => {
   const res = await lmsClient.patch(`${BOOK}/${data.id}`, {
     title: data.title,
     author: data.author,
-    isbn: data.isbn.toLocaleLowerCase().trim(),
+    isbn: data.isbn.trim(),
     categories: data.categories,
     description: data.description,
     publicationDate: data.disablePublication
