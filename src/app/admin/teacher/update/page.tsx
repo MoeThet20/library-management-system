@@ -13,14 +13,17 @@ import {
   DialogActions,
   Slide,
 } from "@mui/material";
-import { Formik, Form } from "formik";
+import { Formik, Form, FormikProps } from "formik";
 
 import { Select, TextInput, Layout } from "@/components/common";
 
 import { OCCUPATION } from "@/const";
 import { useRouter } from "next/navigation";
 import { Colors } from "@/const/colors";
-import { teacherUpdate } from "@/services/teacher.service";
+import {
+  changeTeacherPassword,
+  teacherUpdate,
+} from "@/services/teacher.service";
 import { TEACHER_LIST } from "@/const/routes";
 import {
   TEACHER_CHANGE_PASSWORD_INITIAL_VALUES,
@@ -29,7 +32,7 @@ import {
   TEACHER_UPDATE_TYPE,
 } from "@/initialValues/teacher";
 import { useAppSelector } from "@/hook/ReduxHooks";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { TransitionProps } from "@mui/material/transitions";
 import validation from "@/validation/teacher.service";
 
@@ -43,6 +46,8 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export default function TeacherUpdate() {
+  const changePasswordRef =
+    React.useRef<FormikProps<TEACHER_CHANGE_PASSWORD_TYPE> | null>(null);
   const router = useRouter();
   const { data } = useSession();
   const [isOpenChangePasswordModal, setIsOpenChangePasswordModal] =
@@ -64,7 +69,22 @@ export default function TeacherUpdate() {
   const toggleModal = () => setIsOpenChangePasswordModal((prev) => !prev);
 
   const handleChangePassword = async (values: TEACHER_CHANGE_PASSWORD_TYPE) => {
-    console.log(values);
+    if (!selectedTeacher?.id) return;
+    try {
+      const request = {
+        id: selectedTeacher?.id,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+      };
+      const res = await changeTeacherPassword(request);
+
+      if (!res) return;
+
+      signOut();
+    } finally {
+      changePasswordRef?.current?.resetForm();
+      toggleModal();
+    }
   };
 
   return (
@@ -133,6 +153,7 @@ export default function TeacherUpdate() {
           <DialogContent>
             <DialogContentText id="alert-dialog-slide-description">
               <Formik
+                innerRef={changePasswordRef}
                 initialValues={TEACHER_CHANGE_PASSWORD_INITIAL_VALUES}
                 validationSchema={
                   validation.teacherChangePasswordValidationSchema
@@ -157,7 +178,6 @@ export default function TeacherUpdate() {
                   </Form>
                 )}
               </Formik>
-              {/* {message && <div>{message}</div>} */}
             </DialogContentText>
           </DialogContent>
         </Dialog>

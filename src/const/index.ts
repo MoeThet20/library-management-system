@@ -35,4 +35,4 @@ export const CONFIRM_MESSAGE = {
   DELETE: "Do you want to delete?",
 };
 
-export const WARNING_TIME = 3;
+export const WARNING_TIME = 7;

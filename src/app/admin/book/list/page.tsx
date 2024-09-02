@@ -236,9 +236,7 @@ export default function BookList() {
                 onChange={(event) => handleCategoryChange(event.target.value)}
                 label="Categories"
               >
-                <MenuItem value="all">
-                  <em>All</em>
-                </MenuItem>
+                <MenuItem value="all">All</MenuItem>
                 {categories.length > 0 &&
                   categories.map((category: categoryType, index: number) => (
                     <MenuItem key={index} value={category.value}>

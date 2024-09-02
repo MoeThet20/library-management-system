@@ -5,6 +5,7 @@ import {
 import { lmsClient } from "./api";
 
 const TEACHER = "teacher";
+const CHANGE_PASSWORD = "changePassword";
 
 export const teacherRegister = async (data: TEACHER_REGISTER_TYPE) => {
   const res = await lmsClient.post(TEACHER, {
@@ -43,3 +44,12 @@ export const getTeacherWithQuery = async (
 
 export const teacherDelete = async (id: string) =>
   await lmsClient.delete(`${TEACHER}/${id}`);
+
+export const changeTeacherPassword = async (data: {
+  id: string;
+  password: string;
+  confirmPassword: string;
+}) => {
+  const res = await lmsClient.post(CHANGE_PASSWORD, data);
+  return res?.data;
+};
