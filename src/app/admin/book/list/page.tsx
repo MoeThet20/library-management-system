@@ -265,13 +265,13 @@ export default function BookList() {
             <TableBody>
               {!data ? (
                 <TableRow>
-                  <TableCell colSpan={8} align="center">
+                  <TableCell colSpan={9} align="center">
                     <Loading />
                   </TableCell>
                 </TableRow>
               ) : data?.list.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} align="center">
+                  <TableCell colSpan={9} align="center">
                     There is no book.
                   </TableCell>
                 </TableRow>
