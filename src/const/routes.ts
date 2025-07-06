@@ -26,7 +26,7 @@ export const RETURN_CREATE = "/admin/return/create";
 export const LOGIN = "/login";
 export const REGISTER = "/register";
 
-export const PUBLIC_ROUTE = [LOGIN];
+export const PUBLIC_ROUTE = [USER_DASHBOARD, LOGIN];
 
 export const LOADING_DISABLE = [
   TEACHER_LIST,

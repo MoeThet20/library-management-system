@@ -9,6 +9,7 @@ import { LoadingModal } from "@/components/common";
 import { LearnMoreModal } from "@/components";
 import { useRouter } from "next/navigation";
 import { LOGIN } from "@/const/routes";
+import useRedirectIfAuthenticated from "@/hook/useRedirectIfAuthenticated";
 
 type ListType = {
   id: string;
@@ -37,6 +38,7 @@ const ONE = 1;
 
 export default function BookSearchList() {
   const router = useRouter();
+  useRedirectIfAuthenticated();
   const [searchValue, setSearchValue] = React.useState("");
   const [books, setBooks] = React.useState<DataType | null>(null);
   const [selectedBook, setSelectedBook] = React.useState<ListType | null>(null);

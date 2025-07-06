@@ -16,19 +16,31 @@ export default withAuth(
 
     if (!userToken) return;
     const isPublicRoutes = PUBLIC_ROUTE.includes(pathName);
+    const isAdminRoutes = pathName.startsWith("/admin");
     const isAdmin = userToken?.user?.role === ADMIN;
 
     if (isPublicRoutes && isAdmin) {
       return NextResponse.redirect(new URL(ADMIN_DASHBOARD, req.url));
     }
+
+    if (isAdminRoutes && !isAdmin) {
+      return NextResponse.redirect(new URL(LOGIN, req.url));
+    }
   },
   {
     callbacks: {
       authorized: ({ req, token }) => {
-        if (req.nextUrl.pathname === USER_DASHBOARD) {
-          return true;
+        const pathName = req.nextUrl.pathname;
+
+        if (PUBLIC_ROUTE.includes(pathName)) return true;
+
+        if (!token) return false;
+
+        if (pathName.startsWith("/admin")) {
+          return token.user?.role === ADMIN;
         }
-        return !!token;
+
+        return true;
       },
     },
     pages: {
