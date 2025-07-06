@@ -2,9 +2,10 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies and run the development server:
 
 ```bash
+npm install
 npm run dev
 # or
 yarn dev
@@ -12,6 +13,24 @@ yarn dev
 pnpm dev
 # or
 bun dev
+```
+
+To link this package globally for development, run:
+
+```bash
+npm run link
+```
+
+Run the linter to check code style:
+
+```bash
+npm run lint
+```
+
+Run the unit tests:
+
+```bash
+npm test
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
